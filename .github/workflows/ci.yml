@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check homepage links
+        run: |
+          node --input-type=module <<'NODE'
+          import { existsSync, readFileSync } from 'node:fs';
+          import { resolve } from 'node:path';
+
+          const html = readFileSync('index.html', 'utf8');
+          const links = [...html.matchAll(/href=["']([^"'#]+)["']/g)]
+            .map(([, href]) => decodeURIComponent(href.split(/[?#]/, 1)[0]))
+            .filter((href) => !/^[a-z][a-z\d+.-]*:/i.test(href) && !href.startsWith('/'));
+          const missing = links.filter((href) => !existsSync(resolve(href)));
+
+          if (missing.length > 0) {
+            console.error(`Missing homepage targets: ${missing.join(', ')}`);
+            process.exit(1);
+          }
+          NODE
+
+      - name: Check JavaScript syntax
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          import { Script } from 'node:vm';
+
+          const html = readFileSync('week7/book-search.html', 'utf8');
+          const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+            .map(([, source]) => source.trim())
+            .filter(Boolean);
+
+          if (scripts.length === 0) {
+            console.error('No inline JavaScript found in week7/book-search.html');
+            process.exit(1);
+          }
+
+          scripts.forEach((source, index) => {
+            new Script(source, { filename: `week7/book-search.html:inline-script-${index + 1}` });
+          });
+          NODE
