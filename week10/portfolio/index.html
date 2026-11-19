@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Muhammadsodik — Web Developer Portfolio" />
+  <title>Portfolio · Muhammadsodik</title>
+  <link rel="stylesheet" href="../navigation.css">
+  <style>
+    :root {
+      --bg: #050507;
+      --glass: rgba(255, 255, 255, 0.045);
+      --glass-hover: rgba(255, 255, 255, 0.09);
+      --border: rgba(255, 255, 255, 0.12);
+      --border-hover: rgba(255, 255, 255, 0.32);
+      --text: #f5f5f7;
+      /* WCAG AA compliant muted text against #050507 (contrast > 7.5:1) */
+      --muted: #a1a1a6;
+      --accent: #64d2ff;
+      --accent-2: #bf5af2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      overflow-x: hidden;
+      background: var(--bg);
+    }
+
+    /* Ambient Orbs */
+    .ambient-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(115px);
+      opacity: 0.32;
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 46vw;
+      height: 46vw;
+      top: -10%;
+      right: -8%;
+      background: radial-gradient(circle, #bf5af2, transparent 70%);
+    }
+
+    .orb-2 {
+      width: 44vw;
+      height: 44vw;
+      bottom: -8%;
+      left: -10%;
+      background: radial-gradient(circle, #0a84ff, transparent 70%);
+      animation-delay: -10s;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-5vw, 4vh) scale(1.1); }
+    }
+
+    /* Fixed Glass Topbar with Semantic <nav> */
+    header.topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      padding: 14px clamp(20px, 5vw, 64px);
+      background: rgba(5, 5, 7, 0.72);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    nav.top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .github-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition:
+        background 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .github-pill:hover,
+    .github-pill:focus-visible {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--border-hover);
+      box-shadow: 0 0 28px rgba(191, 90, 242, 0.25);
+      transform: translateY(-1px);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      transition-duration: 0.25s;
+    }
+
+    /* Apple Scroll-Craft Hero */
+    .scroll-stage {
+      position: relative;
+      height: 170vh;
+      z-index: 1;
+    }
+
+    .sticky-hero {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 24px;
+      will-change: transform, opacity, filter;
+    }
+
+    .kicker {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.8rem, 8.8vw, 7.2rem);
+      font-weight: 700;
+      letter-spacing: -0.045em;
+      line-height: 0.98;
+      color: #ffffff;
+      background: linear-gradient(180deg, #ffffff 35%, rgba(255, 255, 255, 0.65) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-role {
+      margin-top: 20px;
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: var(--muted);
+      letter-spacing: -0.01em;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 34px;
+      width: 1px;
+      height: 44px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+    }
+
+    /* Main Content */
+    main {
+      position: relative;
+      z-index: 2;
+      max-width: 1040px;
+      margin: -22vh auto 0;
+      padding: 0 clamp(20px, 5vw, 48px) 120px;
+      display: grid;
+      gap: 72px;
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* Interactive Project Filter Controls */
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition:
+        background 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        color 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .filter-btn:hover,
+    .filter-btn:focus-visible {
+      color: var(--text);
+      border-color: var(--border-hover);
+      background: rgba(255, 255, 255, 0.1);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      transition-duration: 0.2s;
+    }
+
+    .filter-btn[aria-pressed="true"] {
+      background: rgba(100, 210, 255, 0.16);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .glass-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 225px;
+      padding: 30px;
+      border-radius: 26px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      text-decoration: none;
+      color: var(--text);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(36px) scale(0.97);
+      transition:
+        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+        background 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-card.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .glass-card.is-hidden {
+      display: none;
+    }
+
+    .glass-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        360px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255, 255, 255, 0.14),
+        transparent 65%
+      );
+      opacity: 0;
+      transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .glass-card:hover,
+    .glass-card:focus-visible {
+      background: var(--glass-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-6px) scale(1.015);
+      box-shadow:
+        0 24px 48px -12px rgba(0, 0, 0, 0.75),
+        0 0 34px rgba(100, 210, 255, 0.16);
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      transition-duration: 0.28s;
+    }
+
+    .glass-card:hover::before,
+    .glass-card:focus-visible::before {
+      opacity: 1;
+      transition-duration: 0.25s;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-index {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .card-arrow {
+      font-size: 1.15rem;
+      color: var(--muted);
+      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), color 1.2s ease;
+    }
+
+    .glass-card:hover .card-arrow {
+      color: var(--text);
+      transform: translate(4px, -4px);
+      transition-duration: 0.25s;
+    }
+
+    .card-title {
+      margin-top: 28px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    .card-desc {
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .card-tags {
+      margin-top: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mini-tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: #e5e5ea;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    /* Stack Pills with Lingering Hover */
+    .stack-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stack-pill {
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      cursor: default;
+      transition:
+        background 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 1.5s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stack-pill:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(100, 210, 255, 0.45);
+      box-shadow: 0 0 24px rgba(100, 210, 255, 0.2);
+      transform: translateY(-3px);
+      transition-duration: 0.22s;
+    }
+
+    footer {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    @media (max-width: 520px) {
+      .nav-links .section-jump { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .orb { animation: none; }
+      .glass-card { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-canvas" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+  </div>
+
+  <header class="topbar">
+    <nav class="top-nav" aria-label="Primary navigation">
+      <a class="home-link" href="../index.html">← Archive</a>
+      <div class="nav-links">
+        <a class="github-pill section-jump" href="#work-section">Work</a>
+        <a class="github-pill section-jump" href="#stack-section">Stack</a>
+        <a class="github-pill" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="scroll-stage" id="scroll-stage">
+    <div class="sticky-hero" id="sticky-hero">
+      <span class="kicker">Developer Portfolio</span>
+      <h1 class="hero-title">Muhammadsodik</h1>
+      <p class="hero-role">Full-Stack Web Development · South Korea</p>
+      <div class="scroll-cue" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <main>
+    <section id="work-section" aria-labelledby="work-heading">
+      <div class="section-head">
+        <h2 class="section-label" id="work-heading">Selected Work</h2>
+        <div class="filter-group" role="group" aria-label="Filter projects by category">
+          <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="filter-btn" type="button" data-filter="frontend" aria-pressed="false">Frontend</button>
+          <button class="filter-btn" type="button" data-filter="fullstack" aria-pressed="false">Full-Stack</button>
+          <button class="filter-btn" type="button" data-filter="api" aria-pressed="false">API</button>
+        </div>
+      </div>
+
+      <div class="projects-grid" id="projects-grid">
+        <a class="glass-card" data-category="frontend" href="../index.html">
+          <div>
+            <div class="card-header"><span class="card-index">01 · Frontend</span><span class="card-arrow" aria-hidden="true">↗</span></div>
+            <h3 class="card-title">Web Programming Labs</h3>
+            <p class="card-desc">Twelve weeks of interactive exercises spanning semantic layout, CSS motion, DOM events, and async APIs.</p>
+          </div>
+          <div class="card-tags">
+            <span class="mini-tag">HTML5</span>
+            <span class="mini-tag">CSS3</span>
+            <span class="mini-tag">JavaScript</span>
+          </div>
+        </a>
+
+        <a class="glass-card" data-category="fullstack" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">
+          <div>
+            <div class="card-header"><span class="card-index">02 · Full-Stack</span><span class="card-arrow" aria-hidden="true">↗</span></div>
+            <h3 class="card-title">E-Commerce Architecture</h3>
+            <p class="card-desc">Structured MongoDB collections for catalog products, categories, inventory tracking, and dynamic pricing.</p>
+          </div>
+          <div class="card-tags">
+            <span class="mini-tag">MongoDB</span>
+            <span class="mini-tag">TypeScript</span>
+            <span class="mini-tag">Next.js</span>
+          </div>
+        </a>
+
+        <a class="glass-card" data-category="api" href="../week7/book-search.html">
+          <div>
+            <div class="card-header"><span class="card-index">03 · API App</span><span class="card-arrow" aria-hidden="true">↗</span></div>
+            <h3 class="card-title">Open Library Explorer</h3>
+            <p class="card-desc">Real-time catalog search interface powered by Fetch API and asynchronous data rendering.</p>
+          </div>
+          <div class="card-tags">
+            <span class="mini-tag">REST API</span>
+            <span class="mini-tag">Async/Await</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section id="stack-section" aria-labelledby="stack-heading">
+      <h2 class="section-label" id="stack-heading">Stack</h2>
+      <div class="stack-wrap">
+        <span class="stack-pill">HTML5</span>
+        <span class="stack-pill">CSS3</span>
+        <span class="stack-pill">JavaScript</span>
+        <span class="stack-pill">TypeScript</span>
+        <span class="stack-pill">Next.js</span>
+        <span class="stack-pill">Tailwind CSS</span>
+        <span class="stack-pill">MongoDB</span>
+        <span class="stack-pill">Git &amp; GitHub</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>MUHAMMADSODIK · 2026</span>
+  </footer>
+
+  <script>
+    // 1. Apple Scroll-Craft Hero
+    const stage = document.getElementById("scroll-stage");
+    const hero = document.getElementById("sticky-hero");
+
+    function updateScrollCraft() {
+      const rect = stage.getBoundingClientRect();
+      const scrollable = stage.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+
+      const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+      const scale = 1 - progress * 0.22;
+      const opacity = 1 - progress * 1.35;
+      const blur = progress * 14;
+      const translateY = -progress * 60;
+
+      hero.style.transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
+      hero.style.opacity = Math.max(opacity, 0);
+      hero.style.filter = `blur(${blur}px)`;
+    }
+
+    window.addEventListener("scroll", updateScrollCraft, { passive: true });
+    updateScrollCraft();
+
+    // 2. Scroll Reveal & Pointer Spotlight
+    const cards = document.querySelectorAll(".glass-card");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, idx) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => entry.target.classList.add("is-visible"), idx * 60);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    cards.forEach((card) => observer.observe(card));
+
+    cards.forEach((card) => {
+      card.addEventListener("pointermove", (e) => {
+        const bounds = card.getBoundingClientRect();
+        card.style.setProperty("--mx", `${e.clientX - bounds.left}px`);
+        card.style.setProperty("--my", `${e.clientY - bounds.top}px`);
+      });
+    });
+
+    // 3. Interactive Project Category Filter
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const selected = btn.dataset.filter;
+        filterButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+
+        cards.forEach((card) => {
+          const match = selected === "all" || card.dataset.category === selected;
+          card.classList.toggle("is-hidden", !match);
+          if (match) card.classList.add("is-visible");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
