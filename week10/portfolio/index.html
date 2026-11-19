@@ -1,23 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-mono="false">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Muhammadsodik — Web Developer Portfolio" />
-  <title>Portfolio · Muhammadsodik</title>
-  <link rel="stylesheet" href="../navigation.css">
+  <meta name="description" content="Muhammadsodik — Full-Stack Web Developer Portfolio" />
+  <title>Muhammadsodik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style id="dynamic-stars-style"></style>
   <style>
     :root {
-      --bg: #050507;
-      --glass: rgba(255, 255, 255, 0.045);
-      --glass-hover: rgba(255, 255, 255, 0.09);
-      --border: rgba(255, 255, 255, 0.12);
-      --border-hover: rgba(255, 255, 255, 0.32);
-      --text: #f5f5f7;
-      /* WCAG AA compliant muted text against #050507 (contrast > 7.5:1) */
-      --muted: #a1a1a6;
-      --accent: #64d2ff;
-      --accent-2: #bf5af2;
+      --bg-gradient: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      --bg-solid: #090A0F;
+      --text: #f0f4f8;
+      --muted: #8b9bb0;
+      --line: rgba(255, 255, 255, 0.24);
+      --star-opacity: 1;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+      --active-font: var(--font-sans);
+      --frame-pad: clamp(16px, 3vw, 32px);
+    }
+
+    html[data-theme="light"] {
+      --bg-gradient: radial-gradient(ellipse at bottom, #dcdcdc 0%, #efefef 100%);
+      --bg-solid: #efefef;
+      --text: #141414;
+      --muted: #5a5a5a;
+      --line: rgba(20, 20, 20, 0.28);
+      --star-opacity: 0.25;
+    }
+
+    html[data-mono="true"] {
+      --active-font: var(--font-mono);
     }
 
     * {
@@ -26,580 +42,693 @@
       padding: 0;
     }
 
-    html {
-      scroll-behavior: smooth;
-      background: var(--bg);
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-solid);
+      background-image: var(--bg-gradient);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      font-family: var(--active-font);
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.45s ease, color 0.45s ease;
     }
 
-    body {
-      overflow-x: hidden;
-      background: var(--bg);
-    }
-
-    /* Ambient Orbs */
-    .ambient-canvas {
+    /* Parallax Pixel Stars Container */
+    .starfield {
       position: fixed;
       inset: 0;
+      overflow: hidden;
       z-index: 0;
       pointer-events: none;
-      overflow: hidden;
+      opacity: var(--star-opacity);
+      transition: opacity 0.45s ease;
     }
 
-    .orb {
+    #stars, #stars2, #stars3 {
       position: absolute;
-      border-radius: 50%;
-      filter: blur(115px);
-      opacity: 0.32;
-      animation: drift 20s ease-in-out infinite alternate;
-    }
-
-    .orb-1 {
-      width: 46vw;
-      height: 46vw;
-      top: -10%;
-      right: -8%;
-      background: radial-gradient(circle, #bf5af2, transparent 70%);
-    }
-
-    .orb-2 {
-      width: 44vw;
-      height: 44vw;
-      bottom: -8%;
-      left: -10%;
-      background: radial-gradient(circle, #0a84ff, transparent 70%);
-      animation-delay: -10s;
-    }
-
-    @keyframes drift {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-5vw, 4vh) scale(1.1); }
-    }
-
-    /* Fixed Glass Topbar with Semantic <nav> */
-    header.topbar {
-      position: fixed;
       top: 0;
       left: 0;
-      right: 0;
-      z-index: 50;
-      padding: 14px clamp(20px, 5vw, 64px);
-      background: rgba(5, 5, 7, 0.72);
-      backdrop-filter: blur(22px) saturate(180%);
-      -webkit-backdrop-filter: blur(22px) saturate(180%);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: transparent;
+      will-change: transform;
     }
 
-    nav.top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      max-width: 1120px;
-      margin: 0 auto;
+    #stars {
+      width: 1px;
+      height: 1px;
+      animation: animStar 25s linear infinite;
     }
 
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    #stars::after {
+      content: " ";
+      position: absolute;
+      top: 2000px;
+      width: 1px;
+      height: 1px;
+      background: transparent;
     }
 
-    .github-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border-radius: 999px;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-size: 0.85rem;
-      font-weight: 500;
-      text-decoration: none;
-      transition:
-        background 1.3s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 1.3s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 1.3s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    #stars2 {
+      width: 2px;
+      height: 2px;
+      animation: animStar 50s linear infinite;
     }
 
-    .github-pill:hover,
-    .github-pill:focus-visible {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: var(--border-hover);
-      box-shadow: 0 0 28px rgba(191, 90, 242, 0.25);
-      transform: translateY(-1px);
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      transition-duration: 0.25s;
+    #stars2::after {
+      content: " ";
+      position: absolute;
+      top: 2000px;
+      width: 2px;
+      height: 2px;
+      background: transparent;
     }
 
-    /* Apple Scroll-Craft Hero */
-    .scroll-stage {
-      position: relative;
-      height: 170vh;
+    #stars3 {
+      width: 3px;
+      height: 3px;
+      animation: animStar 80s linear infinite;
+    }
+
+    #stars3::after {
+      content: " ";
+      position: absolute;
+      top: 2000px;
+      width: 3px;
+      height: 3px;
+      background: transparent;
+    }
+
+    @keyframes animStar {
+      0% {
+        transform: translate3d(0, 0px, 0);
+      }
+      100% {
+        transform: translate3d(0, -2000px, 0);
+      }
+    }
+
+    /* Architectural Outer Frame */
+    .viewport-frame {
+      position: fixed;
+      inset: var(--frame-pad);
+      border: 1px solid var(--line);
       z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(180px, 260px) 1fr;
+      padding: clamp(20px, 3.2vw, 40px);
+      overflow: hidden;
+      transition: border-color 0.45s ease;
     }
 
-    .sticky-hero {
-      position: sticky;
-      top: 0;
-      height: 100vh;
+    /* Left Column: Identity & Navigation */
+    .sidebar {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 0 24px;
-      will-change: transform, opacity, filter;
+      justify-content: space-between;
+      z-index: 2;
+      height: 100%;
     }
 
-    .kicker {
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 18px;
-    }
-
-    .hero-title {
-      font-size: clamp(2.8rem, 8.8vw, 7.2rem);
-      font-weight: 700;
-      letter-spacing: -0.045em;
-      line-height: 0.98;
-      color: #ffffff;
-      background: linear-gradient(180deg, #ffffff 35%, rgba(255, 255, 255, 0.65) 100%);
+    .brand-block h1 {
+      font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(180deg, #ffffff 20%, #8fa3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
-    .hero-role {
-      margin-top: 20px;
-      font-size: clamp(1rem, 2vw, 1.3rem);
-      color: var(--muted);
-      letter-spacing: -0.01em;
+    html[data-theme="light"] .brand-block h1 {
+      background: none;
+      -webkit-text-fill-color: var(--text);
     }
 
-    .scroll-cue {
-      position: absolute;
-      bottom: 34px;
-      width: 1px;
-      height: 44px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
-    }
-
-    /* Main Content */
-    main {
-      position: relative;
-      z-index: 2;
-      max-width: 1040px;
-      margin: -22vh auto 0;
-      padding: 0 clamp(20px, 5vw, 48px) 120px;
-      display: grid;
-      gap: 72px;
-    }
-
-    .section-head {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .section-label {
+    .brand-block .subtitle {
+      margin-top: 6px;
       font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      font-weight: 400;
       color: var(--muted);
+      letter-spacing: 0.01em;
     }
 
-    /* Interactive Project Filter Controls */
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .filter-btn {
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--glass);
-      color: var(--muted);
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition:
-        background 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-        color 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .filter-btn:hover,
-    .filter-btn:focus-visible {
-      color: var(--text);
-      border-color: var(--border-hover);
-      background: rgba(255, 255, 255, 0.1);
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      transition-duration: 0.2s;
-    }
-
-    .filter-btn[aria-pressed="true"] {
-      background: rgba(100, 210, 255, 0.16);
-      border-color: var(--accent);
-      color: #ffffff;
-    }
-
-    /* Projects Grid */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .glass-card {
-      position: relative;
+    .primary-nav {
+      margin-top: clamp(28px, 5vh, 52px);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      min-height: 225px;
-      padding: 30px;
-      border-radius: 26px;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(28px) saturate(160%);
-      -webkit-backdrop-filter: blur(28px) saturate(160%);
-      text-decoration: none;
+      gap: 11px;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 400;
       color: var(--text);
-      overflow: hidden;
+      text-align: left;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn:focus-visible {
+      opacity: 0.55;
+      outline: none;
+    }
+
+    .nav-dot {
+      font-size: 0.55rem;
+      line-height: 1;
       opacity: 0;
-      transform: translateY(36px) scale(0.97);
-      transition:
-        opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-        background 1.6s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 1.6s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(0.4);
+      transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
-    .glass-card.is-visible {
+    .nav-btn[aria-current="page"] .nav-dot {
       opacity: 1;
-      transform: translateY(0) scale(1);
+      transform: scale(1);
     }
 
-    .glass-card.is-hidden {
+    .nav-btn[aria-current="page"] .nav-label {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .archive-back {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+      transition: opacity 0.25s ease;
+    }
+
+    .archive-back:hover {
+      opacity: 0.55;
+    }
+
+    /* Right Column: Dynamic View Canvas */
+    .stage-area {
+      position: relative;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      z-index: 2;
+      padding-left: clamp(12px, 3vw, 40px);
+    }
+/* Matches the exact width of the text block underneath */
+.home-visual {
+  width: 100%;
+  max-width: 350px;          /* Match .manifesto's max-width (e.g., 245px or 440px) */
+  margin-bottom: 20px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  pointer-events: none;
+}
+
+.home-visual img {
+  display: block;
+  width: 100%;               /* Scales your PNG to match the full text width */
+  height: auto;
+  background: transparent;
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  filter: grayscale(100%) contrast(1.12) brightness(0.92)
+          drop-shadow(0 0 24px rgba(139, 155, 176, 0.16));
+}
+
+html[data-theme="light"] .home-visual img {
+  filter: grayscale(100%) contrast(1.08) brightness(0.98);
+}
+    .stage-area::-webkit-scrollbar {
       display: none;
     }
 
-    .glass-card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(
-        360px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(255, 255, 255, 0.14),
-        transparent 65%
-      );
-      opacity: 0;
-      transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-      pointer-events: none;
+    .view-panel {
+      display: none;
+      min-height: 100%;
+      animation: viewFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .glass-card:hover,
-    .glass-card:focus-visible {
-      background: var(--glass-hover);
-      border-color: var(--border-hover);
-      transform: translateY(-6px) scale(1.015);
-      box-shadow:
-        0 24px 48px -12px rgba(0, 0, 0, 0.75),
-        0 0 34px rgba(100, 210, 255, 0.16);
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      transition-duration: 0.28s;
-    }
-
-    .glass-card:hover::before,
-    .glass-card:focus-visible::before {
-      opacity: 1;
-      transition-duration: 0.25s;
-    }
-
-    .card-header {
+    .view-panel.is-active {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
     }
 
-    .card-index {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      color: var(--accent);
-      text-transform: uppercase;
+    @keyframes viewFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .card-arrow {
-      font-size: 1.15rem;
-      color: var(--muted);
-      transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), color 1.2s ease;
+    /* Home View: Bottom-Right Manifesto */
+    .home-panel {
+      justify-content: flex-end;
+      align-items: flex-end;
+      text-align: left;
+      padding-bottom: 4px;
     }
 
-    .glass-card:hover .card-arrow {
-      color: var(--text);
-      transform: translate(4px, -4px);
-      transition-duration: 0.25s;
-    }
-
-    .card-title {
-      margin-top: 28px;
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: -0.025em;
-    }
-
-    .card-desc {
-      margin-top: 8px;
-      font-size: 0.92rem;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    .card-tags {
-      margin-top: 22px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .mini-tag {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      color: #e5e5ea;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-    }
-
-    /* Stack Pills with Lingering Hover */
-    .stack-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .stack-pill {
-      padding: 12px 22px;
-      border-radius: 999px;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(20px);
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text);
-      cursor: default;
-      transition:
-        background 1.5s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 1.5s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .stack-pill:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(100, 210, 255, 0.45);
-      box-shadow: 0 0 24px rgba(100, 210, 255, 0.2);
-      transform: translateY(-3px);
-      transition-duration: 0.22s;
-    }
-
-    footer {
-      text-align: center;
-      padding: 36px 20px;
-      color: var(--muted);
+    .manifesto {
+      max-width: 245px;
       font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      line-height: 1.75;
+      font-weight: 400;
+      color: var(--text);
     }
 
-    @media (max-width: 520px) {
-      .nav-links .section-jump { display: none; }
+    /* Projects View: Large Architectural Index */
+    .projects-panel {
+      justify-content: flex-start;
+      align-items: flex-end;
+      padding-top: 8px;
+      padding-bottom: 40px;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .orb { animation: none; }
-      .glass-card { opacity: 1; transform: none; transition: none; }
+    .project-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: clamp(22px, 3.6vh, 36px);
+    }
+
+    .project-item {
+      text-align: right;
+      text-decoration: none;
+      color: var(--text);
+      display: block;
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-list:hover .project-item {
+      opacity: 0.35;
+    }
+
+    .project-list .project-item:hover,
+    .project-list .project-item:focus-visible {
+      opacity: 1;
+      transform: translateX(-8px);
+      outline: none;
+    }
+
+    .project-title {
+      font-size: clamp(1.85rem, 4.4vw, 3.7rem);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+    }
+
+    .project-meta {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* Info View: Bio & Technical Stack */
+    .info-panel {
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-bottom: 8px;
+    }
+
+    .info-grid {
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      font-size: 0.82rem;
+      line-height: 1.75;
+    }
+
+    .info-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stack-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      color: var(--text);
+    }
+
+    .stack-inline span::after {
+      content: "/";
+      margin-left: 14px;
+      color: var(--muted);
+    }
+
+    .stack-inline span:last-child::after {
+      content: "";
+      margin: 0;
+    }
+
+    /* Contact View */
+    .contact-panel {
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-bottom: 8px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .contact-link {
+      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+      font-weight: 300;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .contact-link:hover {
+      opacity: 0.5;
+      transform: translateX(-6px);
+    }
+
+    /* Outer Frame Theme & Monospace Controls */
+    .frame-controls {
+      position: fixed;
+      left: calc(var(--frame-pad) - 22px);
+      bottom: calc(var(--frame-pad) + 12px);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 10;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 0;
+      transition: color 0.25s ease;
+    }
+
+    .ctrl-btn:hover {
+      color: var(--text);
+    }
+    
+    .ctrl-btn[aria-pressed="true"] {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .ctrl-box {
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--text);
+      display: inline-block;
+    }
+
+    .ctrl-btn[aria-pressed="true"] .ctrl-box {
+      background-color: var(--text);
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --frame-pad: 14px;
+      }
+
+      .viewport-frame {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 20px;
+      }
+
+      .sidebar {
+        height: auto;
+      }
+
+      .primary-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
+
+      .stage-area {
+        padding-left: 0;
+      }
+
+      .frame-controls {
+        left: auto;
+        right: var(--frame-pad);
+        bottom: 2px;
+        writing-mode: horizontal-tb;
+        transform: none;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="ambient-canvas" aria-hidden="true">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
+  <!-- Parallax Pixel Stars Background -->
+  <div class="starfield" aria-hidden="true">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>
   </div>
 
-  <header class="topbar">
-    <nav class="top-nav" aria-label="Primary navigation">
-      <a class="home-link" href="../index.html">← Archive</a>
-      <div class="nav-links">
-        <a class="github-pill section-jump" href="#work-section">Work</a>
-        <a class="github-pill section-jump" href="#stack-section">Stack</a>
-        <a class="github-pill" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+  <!-- Vertical Edge Controls: Dark (Default) / Light / Monospaced -->
+  <div class="frame-controls" role="group" aria-label="Appearance settings">
+    <button class="ctrl-btn" id="btn-dark" type="button" aria-pressed="true">
+      <span class="ctrl-box"></span>Dark
+    </button>
+    <button class="ctrl-btn" id="btn-light" type="button" aria-pressed="false">
+      <span class="ctrl-box"></span>Light
+    </button>
+    <button class="ctrl-btn" id="btn-mono" type="button" aria-pressed="false">
+      <span class="ctrl-box"></span>Monospaced
+    </button>
+  </div>
+
+  <div class="viewport-frame">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <header class="brand-block">
+          <h1>Muhammadsodik</h1>
+          <p class="subtitle">Full-Stack Web Developer</p>
+        </header>
+
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <button class="nav-btn" type="button" data-view="home" aria-current="page">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Home</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="projects">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Projects</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="info">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Info</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="contact">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Contact</span>
+          </button>
+        </nav>
       </div>
-    </nav>
-  </header>
 
-  <section class="scroll-stage" id="scroll-stage">
-    <div class="sticky-hero" id="sticky-hero">
-      <span class="kicker">Developer Portfolio</span>
-      <h1 class="hero-title">Muhammadsodik</h1>
-      <p class="hero-role">Full-Stack Web Development · South Korea</p>
-      <div class="scroll-cue" aria-hidden="true"></div>
-    </div>
-  </section>
+      <div class="sidebar-footer">
+        <a class="archive-back" href="../index.html">← Course Archive</a>
+        <span>© Muhammadsodik 2026</span>
+      </div>
+    </aside>
 
-  <main>
-    <section id="work-section" aria-labelledby="work-heading">
-      <div class="section-head">
-        <h2 class="section-label" id="work-heading">Selected Work</h2>
-        <div class="filter-group" role="group" aria-label="Filter projects by category">
-          <button class="filter-btn" type="button" data-filter="all" aria-pressed="true">All</button>
-          <button class="filter-btn" type="button" data-filter="frontend" aria-pressed="false">Frontend</button>
-          <button class="filter-btn" type="button" data-filter="fullstack" aria-pressed="false">Full-Stack</button>
-          <button class="filter-btn" type="button" data-filter="api" aria-pressed="false">API</button>
+    <!-- Right Dynamic Stage -->
+    <main class="stage-area">
+      <!-- 1. HOME VIEW -->
+      <section class="view-panel home-panel is-active" id="view-home" aria-label="Introduction">
+        <p class="manifesto">
+          Based in South Korea.<br>
+          Elegance is found in simplicity. Intelligence in complexity<br>
+          Order is not found. It is constructed<br>
+          Beyond the code, there is a way of thinking<br>
+          Understanding the unknown is where<br> 
+          engineering begins.
+        </p>
+      </section>
+
+      <!-- 2. PROJECTS VIEW -->
+      <section class="view-panel projects-panel" id="view-projects" aria-label="Selected Projects">
+        <div class="project-list">
+          <a class="project-item" href="../index.html">
+            <h2 class="project-title">Web Programming Labs</h2>
+            <p class="project-meta">2026 / Frontend &amp; DOM / HTML5 · CSS3 · JavaScript</p>
+          </a>
+
+          <a class="project-item" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">
+            <h2 class="project-title">E-Commerce Architecture</h2>
+            <p class="project-meta">2026 / Full-Stack &amp; Schema / MongoDB · TypeScript · Next.js</p>
+          </a>
+
+          <a class="project-item" href="../week7/book-search.html">
+            <h2 class="project-title">Open Library Explorer</h2>
+            <p class="project-meta">2026 / Async API Integration / REST · Fetch · JavaScript</p>
+          </a>
         </div>
-      </div>
+      </section>
 
-      <div class="projects-grid" id="projects-grid">
-        <a class="glass-card" data-category="frontend" href="../index.html">
+      <!-- 3. INFO VIEW -->
+      <section class="view-panel info-panel" id="view-info" aria-label="Information and Stack">
+               <div class="home-visual">
+          <img src="./profile.png" alt="Muhammadsodik portrait" />
+        </div>
+        <div class="info-grid">
           <div>
-            <div class="card-header"><span class="card-index">01 · Frontend</span><span class="card-arrow" aria-hidden="true">↗</span></div>
-            <h3 class="card-title">Web Programming Labs</h3>
-            <p class="card-desc">Twelve weeks of interactive exercises spanning semantic layout, CSS motion, DOM events, and async APIs.</p>
+            <h2 class="info-label">Profile</h2>
+            <p>
+              Undergraduate computer science student studying in South Korea, focused on full-stack application architecture, clean semantic markup, and responsive interface systems.
+            </p>
           </div>
-          <div class="card-tags">
-            <span class="mini-tag">HTML5</span>
-            <span class="mini-tag">CSS3</span>
-            <span class="mini-tag">JavaScript</span>
-          </div>
-        </a>
 
-        <a class="glass-card" data-category="fullstack" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">
           <div>
-            <div class="card-header"><span class="card-index">02 · Full-Stack</span><span class="card-arrow" aria-hidden="true">↗</span></div>
-            <h3 class="card-title">E-Commerce Architecture</h3>
-            <p class="card-desc">Structured MongoDB collections for catalog products, categories, inventory tracking, and dynamic pricing.</p>
+            <h2 class="info-label">Technical Stack</h2>
+            <div class="stack-inline">
+              <span>PHP</span>
+              <span>Python</span>
+              <span>JavaScript</span>
+              <span>C</span>
+              <span>WordPress</span>
+              <span>MongoDB</span>
+              <span>MySQL</span>
+              <span>Git &amp; GitHub</span>
+            </div>
           </div>
-          <div class="card-tags">
-            <span class="mini-tag">MongoDB</span>
-            <span class="mini-tag">TypeScript</span>
-            <span class="mini-tag">Next.js</span>
-          </div>
-        </a>
+        </div>
+      </section>
 
-        <a class="glass-card" data-category="api" href="../week7/book-search.html">
-          <div>
-            <div class="card-header"><span class="card-index">03 · API App</span><span class="card-arrow" aria-hidden="true">↗</span></div>
-            <h3 class="card-title">Open Library Explorer</h3>
-            <p class="card-desc">Real-time catalog search interface powered by Fetch API and asynchronous data rendering.</p>
-          </div>
-          <div class="card-tags">
-            <span class="mini-tag">REST API</span>
-            <span class="mini-tag">Async/Await</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <section id="stack-section" aria-labelledby="stack-heading">
-      <h2 class="section-label" id="stack-heading">Stack</h2>
-      <div class="stack-wrap">
-        <span class="stack-pill">HTML5</span>
-        <span class="stack-pill">CSS3</span>
-        <span class="stack-pill">JavaScript</span>
-        <span class="stack-pill">TypeScript</span>
-        <span class="stack-pill">Next.js</span>
-        <span class="stack-pill">Tailwind CSS</span>
-        <span class="stack-pill">MongoDB</span>
-        <span class="stack-pill">Git &amp; GitHub</span>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <span>MUHAMMADSODIK · 2026</span>
-  </footer>
+      <!-- 4. CONTACT VIEW -->
+      <section class="view-panel contact-panel" id="view-contact" aria-label="Contact and Links">
+        <div class="contact-links">
+          <a class="contact-link" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a class="contact-link" href="https://www.instagram.com/sadik_207/">
+            instagram
+          </a>
+          <a class="contact-link" href="https://x.com/TRAXToRR_">
+            X
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script>
-    // 1. Apple Scroll-Craft Hero
-    const stage = document.getElementById("scroll-stage");
-    const hero = document.getElementById("sticky-hero");
-
-    function updateScrollCraft() {
-      const rect = stage.getBoundingClientRect();
-      const scrollable = stage.offsetHeight - window.innerHeight;
-      if (scrollable <= 0) return;
-
-      const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
-      const scale = 1 - progress * 0.22;
-      const opacity = 1 - progress * 1.35;
-      const blur = progress * 14;
-      const translateY = -progress * 60;
-
-      hero.style.transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
-      hero.style.opacity = Math.max(opacity, 0);
-      hero.style.filter = `blur(${blur}px)`;
+    // 1. Inject CSS Rules Directly for #stars, #stars2, #stars3 and ::after
+    function createStarShadows(count, color) {
+      const shadows = [];
+      const maxWidth = Math.max(window.innerWidth, 2000);
+      for (let i = 0; i < count; i++) {
+        const x = Math.floor(Math.random() * maxWidth);
+        const y = Math.floor(Math.random() * 2000);
+        shadows.push(`${x}px ${y}px ${color}`);
+      }
+      return shadows.join(", ");
     }
 
-    window.addEventListener("scroll", updateScrollCraft, { passive: true });
-    updateScrollCraft();
+    function applyStarfield(color = "#FFF") {
+      const s1 = createStarShadows(700, color);
+      const s2 = createStarShadows(200, color);
+      const s3 = createStarShadows(100, color);
 
-    // 2. Scroll Reveal & Pointer Spotlight
-    const cards = document.querySelectorAll(".glass-card");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry, idx) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => entry.target.classList.add("is-visible"), idx * 60);
-            observer.unobserve(entry.target);
-          }
+      document.getElementById("dynamic-stars-style").textContent = `
+        #stars, #stars::after { box-shadow: ${s1}; }
+        #stars2, #stars2::after { box-shadow: ${s2}; }
+        #stars3, #stars3::after { box-shadow: ${s3}; }
+      `;
+    }
+
+    applyStarfield("#FFF");
+
+    // 2. View Navigation Controller
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const panels = document.querySelectorAll(".view-panel");
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = `view-${btn.dataset.view}`;
+        navButtons.forEach((b) => b.removeAttribute("aria-current"));
+        btn.setAttribute("aria-current", "page");
+
+        panels.forEach((panel) => {
+          panel.classList.toggle("is-active", panel.id === targetId);
         });
-      },
-      { threshold: 0.12 }
-    );
-    cards.forEach((card) => observer.observe(card));
-
-    cards.forEach((card) => {
-      card.addEventListener("pointermove", (e) => {
-        const bounds = card.getBoundingClientRect();
-        card.style.setProperty("--mx", `${e.clientX - bounds.left}px`);
-        card.style.setProperty("--my", `${e.clientY - bounds.top}px`);
       });
     });
 
-    // 3. Interactive Project Category Filter
-    const filterButtons = document.querySelectorAll(".filter-btn");
-    filterButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const selected = btn.dataset.filter;
-        filterButtons.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    // 3. Theme & Monospace Toggle Controller
+    const htmlEl = document.documentElement;
+    const btnLight = document.getElementById("btn-light");
+    const btnDark = document.getElementById("btn-dark");
+    const btnMono = document.getElementById("btn-mono");
 
-        cards.forEach((card) => {
-          const match = selected === "all" || card.dataset.category === selected;
-          card.classList.toggle("is-hidden", !match);
-          if (match) card.classList.add("is-visible");
-        });
-      });
+    function setTheme(theme) {
+      htmlEl.setAttribute("data-theme", theme);
+      btnLight.setAttribute("aria-pressed", String(theme === "light"));
+      btnDark.setAttribute("aria-pressed", String(theme === "dark"));
+      applyStarfield(theme === "dark" ? "#FFF" : "#141414");
+    }
+
+    btnLight.addEventListener("click", () => setTheme("light"));
+    btnDark.addEventListener("click", () => setTheme("dark"));
+
+    btnMono.addEventListener("click", () => {
+      const isMono = htmlEl.getAttribute("data-mono") === "true";
+      htmlEl.setAttribute("data-mono", String(!isMono));
+      btnMono.setAttribute("aria-pressed", String(!isMono));
     });
   </script>
 </body>
