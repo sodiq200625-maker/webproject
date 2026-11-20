@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-mono="false">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Muhammadsodik — Full-Stack Web Developer Portfolio" />
+  <title>Muhammadsodik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style id="dynamic-stars-style"></style>
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+      --bg-solid: #090A0F;
+      --text: #f0f4f8;
+      --muted: #8b9bb0;
+      --line: rgba(255, 255, 255, 0.24);
+      --star-opacity: 1;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+      --active-font: var(--font-sans);
+      --frame-pad: clamp(16px, 3vw, 32px);
+    }
+
+    html[data-theme="light"] {
+      --bg-gradient: radial-gradient(ellipse at bottom, #dcdcdc 0%, #efefef 100%);
+      --bg-solid: #efefef;
+      --text: #141414;
+      --muted: #5a5a5a;
+      --line: rgba(20, 20, 20, 0.28);
+      --star-opacity: 0.25;
+    }
+
+    html[data-mono="true"] {
+      --active-font: var(--font-mono);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-solid);
+      background-image: var(--bg-gradient);
+      background-attachment: fixed;
+      background-size: cover;
+      color: var(--text);
+      font-family: var(--active-font);
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.45s ease, color 0.45s ease;
+    }
+
+    /* Parallax Pixel Stars Container */
+    .starfield {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+      opacity: var(--star-opacity);
+      transition: opacity 0.45s ease;
+    }
+
+    #stars, #stars2, #stars3 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: transparent;
+      will-change: transform;
+    }
+
+    #stars {
+      width: 1px;
+      height: 1px;
+      animation: animStar 25s linear infinite;
+    }
+
+    #stars::after {
+      content: " ";
+      position: absolute;
+      top: 2000px;
+      width: 1px;
+      height: 1px;
+      background: transparent;
+    }
+
+    #stars2 {
+      width: 2px;
+      height: 2px;
+      animation: animStar 50s linear infinite;
+    }
+
+    #stars2::after {
+      content: " ";
+      position: absolute;
+      top: 2000px;
+      width: 2px;
+      height: 2px;
+      background: transparent;
+    }
+
+    #stars3 {
+      width: 3px;
+      height: 3px;
+      animation: animStar 80s linear infinite;
+    }
+
+    #stars3::after {
+      content: " ";
+      position: absolute;
+      top: 2000px;
+      width: 3px;
+      height: 3px;
+      background: transparent;
+    }
+
+    @keyframes animStar {
+      0% {
+        transform: translate3d(0, 0px, 0);
+      }
+      100% {
+        transform: translate3d(0, -2000px, 0);
+      }
+    }
+
+    /* Architectural Outer Frame */
+    .viewport-frame {
+      position: fixed;
+      inset: var(--frame-pad);
+      border: 1px solid var(--line);
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(180px, 260px) 1fr;
+      padding: clamp(20px, 3.2vw, 40px);
+      overflow: hidden;
+      transition: border-color 0.45s ease;
+    }
+
+    /* Left Column: Identity & Navigation */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      z-index: 2;
+      height: 100%;
+    }
+
+    .brand-block h2 {
+      font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(180deg, #ffffff 20%, #8fa3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    html[data-theme="light"] .brand-block h2 {
+      background: none;
+      -webkit-text-fill-color: var(--text);
+    }
+
+    .brand-block .subtitle {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0.01em;
+    }
+
+    .primary-nav {
+      margin-top: clamp(28px, 5vh, 52px);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn:focus-visible {
+      opacity: 0.55;
+      outline: none;
+    }
+
+    .nav-dot {
+      font-size: 0.55rem;
+      line-height: 1;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .nav-btn[aria-current="page"] .nav-dot {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .nav-btn[aria-current="page"] .nav-label {
+      opacity: 0;
+      width: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .archive-back {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      width: fit-content;
+      transition: opacity 0.25s ease;
+    }
+
+    .archive-back:hover {
+      opacity: 0.55;
+    }
+
+    /* Right Column: Dynamic View Canvas */
+    .stage-area {
+      position: relative;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      z-index: 2;
+      padding-left: clamp(12px, 3vw, 40px);
+    }
+
+    .home-visual {
+      width: 100%;
+      max-width: 350px;
+      margin-bottom: 20px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      pointer-events: none;
+    }
+
+    .home-visual img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: transparent;
+      -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+      filter: grayscale(100%) contrast(1.12) brightness(0.92)
+              drop-shadow(0 0 24px rgba(139, 155, 176, 0.16));
+    }
+
+    html[data-theme="light"] .home-visual img {
+      filter: grayscale(100%) contrast(1.08) brightness(0.98);
+    }
+
+    .stage-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    .view-panel {
+      display: none;
+      min-height: 100%;
+      animation: viewFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .view-panel.is-active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes viewFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Home View: Bottom-Right Manifesto */
+    .home-panel {
+      justify-content: flex-end;
+      align-items: flex-end;
+      text-align: left;
+      padding-bottom: 4px;
+    }
+
+    .manifesto {
+      max-width: 245px;
+      font-size: 0.8rem;
+      line-height: 1.75;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* Projects View: Large Architectural Index */
+    .projects-panel {
+      justify-content: flex-start;
+      align-items: flex-end;
+      padding-top: 8px;
+      padding-bottom: 40px;
+    }
+
+    .project-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: clamp(22px, 3.6vh, 36px);
+    }
+
+    .project-item {
+      text-align: right;
+      text-decoration: none;
+      color: var(--text);
+      display: block;
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .project-list:hover .project-item {
+      opacity: 0.35;
+    }
+
+    .project-list .project-item:hover,
+    .project-list .project-item:focus-visible {
+      opacity: 1;
+      transform: translateX(-8px);
+      outline: none;
+    }
+
+    .project-title {
+      font-size: clamp(1.85rem, 4.4vw, 3.7rem);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+    }
+
+    .project-meta {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    /* Info View: Bio & Technical Stack */
+    .info-panel {
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-bottom: 8px;
+    }
+
+    .info-grid {
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      font-size: 0.82rem;
+      line-height: 1.75;
+    }
+
+    .info-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stack-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      color: var(--text);
+    }
+
+    .stack-inline span::after {
+      content: "/";
+      margin-left: 14px;
+      color: var(--muted);
+    }
+
+    .stack-inline span:last-child::after {
+      content: "";
+      margin: 0;
+    }
+
+    /* Contact View */
+    .contact-panel {
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding-bottom: 8px;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+    }
+
+    .contact-link {
+      font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+      font-weight: 300;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .contact-link:hover {
+      opacity: 0.5;
+      transform: translateX(-6px);
+    }
+
+    /* Outer Frame Theme & Monospace Controls */
+    .frame-controls {
+      position: fixed;
+      left: calc(var(--frame-pad) - 22px);
+      bottom: calc(var(--frame-pad) + 12px);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 10;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      color: var(--muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 0;
+      transition: color 0.25s ease;
+    }
+
+    .ctrl-btn:hover {
+      color: var(--text);
+    }
+    
+    .ctrl-btn[aria-pressed="true"] {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .ctrl-box {
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--text);
+      display: inline-block;
+    }
+
+    .ctrl-btn[aria-pressed="true"] .ctrl-box {
+      background-color: var(--text);
+    }
+
+    @media (max-width: 720px) {
+      :root {
+        --frame-pad: 14px;
+      }
+
+      .viewport-frame {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 20px;
+      }
+
+      .sidebar {
+        height: auto;
+      }
+
+      .primary-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
+
+      .stage-area {
+        padding-left: 0;
+      }
+
+      .frame-controls {
+        left: auto;
+        right: var(--frame-pad);
+        bottom: 2px;
+        writing-mode: horizontal-tb;
+        transform: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Parallax Pixel Stars Background -->
+  <div class="starfield" aria-hidden="true">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>
+  </div>
+
+  <!-- Vertical Edge Controls: Dark (Default) / Light / Monospaced -->
+  <div class="frame-controls" role="group" aria-label="Appearance settings">
+    <button class="ctrl-btn" id="btn-dark" type="button" aria-pressed="true">
+      <span class="ctrl-box"></span>Dark
+    </button>
+    <button class="ctrl-btn" id="btn-light" type="button" aria-pressed="false">
+      <span class="ctrl-box"></span>Light
+    </button>
+    <button class="ctrl-btn" id="btn-mono" type="button" aria-pressed="false">
+      <span class="ctrl-box"></span>Monospaced
+    </button>
+  </div>
+
+  <div class="viewport-frame">
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <header class="brand-block">
+          <h2>Muhammadsodik</h2>
+          <p class="subtitle">Full-Stack Web Developer</p>
+        </header>
+
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <button class="nav-btn" type="button" data-view="home" aria-current="page">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Home</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="projects">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Projects</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="info">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Info</span>
+          </button>
+          <button class="nav-btn" type="button" data-view="contact">
+            <span class="nav-dot" aria-hidden="true">●</span>
+            <span class="nav-label">Contact</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <a class="archive-back" href="../index.html">← Course Archive</a>
+        <span>© Muhammadsodik 2026</span>
+      </div>
+    </aside>
+
+    <!-- Right Dynamic Stage -->
+    <main class="stage-area">
+      <!-- 1. HOME VIEW -->
+      <section class="view-panel home-panel is-active" id="view-home" aria-label="Introduction">
+        <p class="manifesto">
+          Based in South Korea.<br>
+          Elegance is found in simplicity. Intelligence in complexity<br>
+          Order is not found. It is constructed<br>
+          Beyond the code, there is a way of thinking<br>
+          Understanding the unknown is where<br> 
+          engineering begins.
+        </p>
+      </section>
+
+      <!-- 2. PROJECTS VIEW -->
+      <section class="view-panel projects-panel" id="view-projects" aria-label="Selected Projects">
+        <div class="project-list">
+          <a class="project-item" href="../index.html">
+            <h2 class="project-title">Web Programming Labs</h2>
+            <p class="project-meta">2026 / Frontend &amp; DOM / HTML5 · CSS3 · JavaScript</p>
+          </a>
+
+          <a class="project-item" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">
+            <h2 class="project-title">E-Commerce Architecture</h2>
+            <p class="project-meta">2026 / Full-Stack &amp; Schema / MongoDB · TypeScript · Next.js</p>
+          </a>
+
+          <a class="project-item" href="../week7/book-search.html">
+            <h2 class="project-title">Open Library Explorer</h2>
+            <p class="project-meta">2026 / Async API Integration / REST · Fetch · JavaScript</p>
+          </a>
+        </div>
+      </section>
+
+      <!-- 3. INFO VIEW -->
+      <section class="view-panel info-panel" id="view-info" aria-label="Information and Stack">
+        <div class="home-visual">
+          <img src="./profile.png" alt="Muhammadsodik portrait" />
+        </div>
+        <div class="info-grid">
+          <div>
+            <h2 class="info-label">Profile</h2>
+            <p>
+              Undergraduate computer science student studying in South Korea, focused on full-stack application architecture, clean semantic markup, and responsive interface systems.
+            </p>
+          </div>
+
+          <div>
+            <h2 class="info-label">Technical Stack</h2>
+            <div class="stack-inline">
+              <span>PHP</span>
+              <span>Python</span>
+              <span>JavaScript</span>
+              <span>C</span>
+              <span>WordPress</span>
+              <span>MongoDB</span>
+              <span>MySQL</span>
+              <span>Git &amp; GitHub</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. CONTACT VIEW -->
+      <section class="view-panel contact-panel" id="view-contact" aria-label="Contact and Links">
+        <div class="contact-links">
+          <a class="contact-link" href="https://github.com/sodiq200625-maker" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <a class="contact-link" href="https://www.instagram.com/sadik_207/" target="_blank" rel="noopener noreferrer">
+            Instagram
+          </a>
+          <a class="contact-link" href="https://x.com/TRAXToRR_" target="_blank" rel="noopener noreferrer">
+            X
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // 1. Inject CSS Rules Directly for #stars, #stars2, #stars3 and ::after
+    function createStarShadows(count, color) {
+      const shadows = [];
+      const maxWidth = Math.max(window.innerWidth, 4000);
+      for (let i = 0; i < count; i++) {
+        const x = Math.floor(Math.random() * maxWidth);
+        const y = Math.floor(Math.random() * 2000);
+        shadows.push(`${x}px ${y}px ${color}`);
+      }
+      return shadows.join(", ");
+    }
+
+    function applyStarfield(color = "#FFF") {
+      const s1 = createStarShadows(1400, color);
+      const s2 = createStarShadows(400, color);
+      const s3 = createStarShadows(200, color);
+
+      document.getElementById("dynamic-stars-style").textContent = `
+        #stars, #stars::after { box-shadow: ${s1}; }
+        #stars2, #stars2::after { box-shadow: ${s2}; }
+        #stars3, #stars3::after { box-shadow: ${s3}; }
+      `;
+    }
+
+    applyStarfield("#FFF");
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+        applyStarfield(isDark ? "#FFF" : "#141414");
+      }, 150);
+    });
+
+    // 2. View Navigation Controller
+    const navButtons = document.querySelectorAll(".nav-btn");
+    const panels = document.querySelectorAll(".view-panel");
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = `view-${btn.dataset.view}`;
+        navButtons.forEach((b) => b.removeAttribute("aria-current"));
+        btn.setAttribute("aria-current", "page");
+
+        panels.forEach((panel) => {
+          panel.classList.toggle("is-active", panel.id === targetId);
+        });
+      });
+    });
+
+    // 3. Theme & Monospace Toggle Controller
+    const htmlEl = document.documentElement;
+    const btnLight = document.getElementById("btn-light");
+    const btnDark = document.getElementById("btn-dark");
+    const btnMono = document.getElementById("btn-mono");
+
+    function setTheme(theme) {
+      htmlEl.setAttribute("data-theme", theme);
+      btnLight.setAttribute("aria-pressed", String(theme === "light"));
+      btnDark.setAttribute("aria-pressed", String(theme === "dark"));
+      applyStarfield(theme === "dark" ? "#FFF" : "#141414");
+    }
+
+    btnLight.addEventListener("click", () => setTheme("light"));
+    btnDark.addEventListener("click", () => setTheme("dark"));
+
+    btnMono.addEventListener("click", () => {
+      const isMono = htmlEl.getAttribute("data-mono") === "true";
+      htmlEl.setAttribute("data-mono", String(!isMono));
+      btnMono.setAttribute("aria-pressed", String(!isMono));
+    });
+  </script>
+</body>
+</html>
