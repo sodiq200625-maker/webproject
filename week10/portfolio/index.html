@@ -139,9 +139,8 @@
       border: 1px solid var(--line);
       z-index: 1;
       display: grid;
-      grid-template-columns: minmax(180px, 260px) 1fr;
+      grid-template-columns: minmax(220px, 320px) 1fr;
       padding: clamp(20px, 3.2vw, 40px);
-      overflow: hidden;
       transition: border-color 0.45s ease;
     }
 
@@ -152,16 +151,22 @@
       justify-content: space-between;
       z-index: 2;
       height: 100%;
+      min-width: 0;
     }
 
     .brand-block h2 {
-      font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+      font-size: clamp(1.45rem, 2.2vw, 2.15rem);
       font-weight: 300;
       letter-spacing: -0.03em;
-      line-height: 1.1;
+      line-height: 1.15;
+      white-space: nowrap;
       background: linear-gradient(180deg, #ffffff 20%, #8fa3b8 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    html[data-mono="true"] .brand-block h2 {
+      font-size: clamp(1.25rem, 1.85vw, 1.85rem);
     }
 
     html[data-theme="light"] .brand-block h2 {
