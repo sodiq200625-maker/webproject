@@ -1,0 +1,89 @@
+/* Styles for the Week 12 class practice page. Colours and fonts come from the course site's
+   shared tokens (assets/frame.css); everything below is my own CSS. */
+
+#root { width: min(100% - 40px, 980px); margin: 0 auto; padding: 44px 0 24px; }
+@media (max-width: 480px) { #root { width: min(100% - 32px, 980px); padding-top: 28px; } }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
+h1, h2, h3 { margin: 0; font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+h1 { font-size: clamp(2.3rem, 6.5vw, 3.6rem); letter-spacing: -0.03em; }
+h2 { font-size: clamp(1.4rem, 3.4vw, 1.8rem); }
+h3 { font-size: 1.1rem; }
+p { margin: 0 0 0.9em; }
+a { color: var(--blue); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.eyebrow { display: flex; width: fit-content; align-items: center; gap: 8px; margin: 0 0 14px; color: var(--accent-dark); font: 600 0.78rem/1.2 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 9px; height: 9px; background: var(--accent); }
+.marker { padding: 0 0.15em; background: linear-gradient(transparent 52%, var(--marker) 52% 94%, transparent 94%); }
+.lead { max-width: 62ch; margin: 16px 0 20px; color: var(--muted); font-size: 1.1rem; }
+
+.page-head { margin-bottom: 8px; }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; }
+.toc a {
+  padding: 6px 12px; border: 1.5px solid var(--ink); border-radius: 999px; background: var(--surface);
+  color: var(--ink); font: 500 0.85rem/1.3 var(--font-body); text-decoration: none;
+}
+.toc a:hover { background: var(--marker); }
+
+/* one block per exercise */
+.section { margin-top: 44px; scroll-margin-top: 16px; }
+.from { margin: 0 0 6px; color: var(--muted); font: 600 0.75rem/1.2 var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; }
+.note { max-width: 64ch; margin: 8px 0 16px; color: var(--muted); }
+.demo { display: grid; gap: 16px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+
+/* the shared card look: flat sticker with a hard shadow */
+.card {
+  padding: 20px; border: var(--stroke); border-radius: var(--radius);
+  background: var(--surface); box-shadow: var(--sticker);
+}
+.card h3 { margin-bottom: 6px; }
+.card p { margin: 0 0 6px; color: var(--muted); }
+
+
+.muted { color: var(--muted); }
+.error { color: var(--danger); font-weight: 600; }
+.big { margin: 0 0 12px; font: 700 2.4rem/1 var(--font-display); }
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.stack { display: grid; gap: 16px; }
+.history, .total { margin: 14px 0 0; font-family: var(--font-mono); }
+.total { font-size: 1.05rem; }
+.line { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.qty { display: inline-flex; align-items: center; gap: 8px; }
+.qty output { min-width: 1.6em; text-align: center; font-family: var(--font-mono); font-weight: 600; }
+.plain-list { margin: 0; padding: 0; list-style: none; }
+.plain-list li { padding: 8px 0; border-bottom: 1.5px solid var(--line); }
+.plain-list li:last-child { border-bottom: 0; }
+.reveal-text { margin: 12px 0 0; }
+.inline-form { display: flex; gap: 8px; margin-bottom: 12px; }
+.inline-form input { flex: 1; min-width: 0; }
+label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+input, textarea { box-sizing: border-box; width: 100%; padding: 10px 12px; border: var(--stroke); border-radius: 10px; background: #fff; color: var(--ink); font: inherit; }
+input:focus-visible, textarea:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.profile { display: flex; gap: 14px; align-items: flex-start; margin-top: 8px; }
+.profile img { border: var(--stroke); border-radius: 50%; }
+.profile h3 { margin-bottom: 4px; }
+.profile p { margin: 0 0 4px; }
+.profile a { overflow-wrap: anywhere; }
+
+button {
+  min-height: 42px; margin-top: 8px; padding: 0 20px; border: var(--stroke); border-radius: 10px;
+  background: var(--accent); box-shadow: 0 3px 0 var(--ink); color: #fff; font: 600 0.95rem/1 var(--font-body); cursor: pointer;
+}
+button:hover:not(:disabled) { background: var(--accent-dark); }
+button:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+button.small { min-height: 32px; padding: 0 10px; margin-top: 0; }
+button:active { transform: translateY(3px); box-shadow: none; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* embed mode: one demo inside an iframe on the Week 12 page, no site header or navigation */
+html.embed .site-header, html.embed #wp-site-controls, html.embed #wp-site-footer, html.embed .skip-link { display: none !important; }
+html.embed body { padding-bottom: 0 !important; }
+html.embed body { background: var(--surface); }
+html.embed #root { width: auto; padding: 16px; }

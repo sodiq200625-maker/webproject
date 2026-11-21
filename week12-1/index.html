@@ -3,393 +3,621 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="An interactive shopping cart with product cards, quantity controls, and a live order summary.">
-  <title>Week 12-1 | The Good Shop</title>
-  <style>
-    :root {
-      color-scheme: light;
-      --ink: #17231e;
-      --muted: #65736b;
-      --paper: #f5f6f1;
-      --surface: #fff;
-      --line: #e0e5dc;
-      --accent: #28684d;
-      --accent-dark: #194b36;
-      --accent-soft: #e7f2e9;
-      --orange: #e27d48;
-      --shadow: 0 16px 38px rgb(34 54 42 / 7%);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      min-width: 320px;
-      min-height: 100vh;
-      margin: 0;
-      background: var(--paper);
-      color: var(--ink);
-      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
-      line-height: 1.5;
-    }
-
-    button, a { font: inherit; }
-    a { color: inherit; }
-    button:focus-visible, a:focus-visible {
-      outline: 3px solid var(--orange);
-      outline-offset: 3px;
-    }
-
-    .page { width: min(1280px, 100%); margin: 0 auto; padding: 24px clamp(18px, 4vw, 52px) 60px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .home-link { color: var(--muted); font-size: .9rem; font-weight: 700; text-decoration: none; }
-    .home-link:hover { color: var(--accent); }
-    .brand { display: flex; align-items: center; gap: 9px; color: var(--accent-dark); font-size: .8rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
-    .brand-mark { display: grid; width: 30px; height: 30px; place-items: center; border-radius: 50%; background: var(--accent); color: #fff; font-size: 1rem; }
-
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: end;
-      gap: 30px;
-      margin: 46px 0 30px;
-      padding: clamp(24px, 5vw, 48px);
-      border: 1px solid #dce5d8;
-      border-radius: 22px;
-      background:
-        radial-gradient(circle at 88% 8%, rgb(197 226 198 / 58%), transparent 14rem),
-        linear-gradient(120deg, #fff 10%, #edf5e9 100%);
-    }
-
-    .eyebrow { margin: 0 0 12px; color: var(--accent); font-size: .75rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
-    h1 { max-width: 720px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 7vw, 5rem); font-weight: 500; letter-spacing: -.06em; line-height: .98; }
-    .hero-copy { max-width: 560px; margin: 17px 0 0; color: var(--muted); font-size: clamp(1rem, 2vw, 1.12rem); }
-    .hero-stamp { display: grid; width: 110px; height: 110px; place-items: center; border: 1px solid #c6d9c6; border-radius: 50%; color: var(--accent); font: 700 .76rem/1.35 Georgia, serif; text-align: center; transform: rotate(9deg); }
-
-    .shop-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: start; gap: 26px; }
-    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin: 0 0 16px; }
-    .section-heading h2 { margin: 0; font: 500 1.7rem Georgia, "Times New Roman", serif; letter-spacing: -.03em; }
-    .section-heading p { margin: 0; color: var(--muted); font-size: .9rem; }
-
-    .product-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .product-card { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); box-shadow: var(--shadow); }
-    .product-image { display: block; width: 100%; aspect-ratio: 1.6; object-fit: cover; background: #e8ece4; }
-    .product-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; background: #e8ece4; }
-    .product-gallery .product-image { aspect-ratio: .75; object-fit: contain; }
-    .product-copy { padding: 16px; }
-    .product-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-    .product-category { color: var(--accent); font-size: .7rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
-    .product-price { font-weight: 800; white-space: nowrap; }
-    .product-card h3 { margin: 7px 0 4px; font: 700 1.18rem Georgia, "Times New Roman", serif; }
-    .product-card p { min-height: 2.8em; margin: 0 0 15px; color: var(--muted); font-size: .88rem; }
-    .add-button, .checkout-button {
-      width: 100%;
-      min-height: 43px;
-      border: 0;
-      border-radius: 8px;
-      background: var(--accent);
-      color: white;
-      font-weight: 800;
-      cursor: pointer;
-      transition: background-color 150ms ease, transform 150ms ease;
-    }
-    .add-button:hover, .checkout-button:hover:not(:disabled) { transform: translateY(-1px); background: var(--accent-dark); }
-    .add-button:active { transform: translateY(0); }
-
-    .cart-panel { position: sticky; top: 20px; padding: 21px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); box-shadow: var(--shadow); }
-    .cart-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
-    .cart-heading h2 { margin: 0; font: 500 1.5rem Georgia, "Times New Roman", serif; }
-    .cart-count { display: grid; min-width: 30px; height: 30px; place-items: center; padding: 0 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-dark); font-size: .82rem; font-weight: 900; }
-    .cart-items { display: grid; gap: 14px; padding: 16px 0; }
-    .cart-empty { margin: 0; padding: 22px 4px; color: var(--muted); text-align: center; }
-    .cart-item { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 11px; }
-    .cart-item img { width: 58px; height: 58px; border-radius: 8px; object-fit: cover; background: #e8ece4; }
-    .cart-item-main { min-width: 0; }
-    .cart-item-top { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
-    .cart-item-name { margin: 0; font-size: .88rem; font-weight: 800; }
-    .cart-item-price { color: var(--muted); font-size: .82rem; white-space: nowrap; }
-    .cart-item-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 7px; }
-    .quantity-control { display: inline-flex; align-items: center; gap: 9px; }
-    .quantity-control button { display: grid; width: 28px; height: 28px; place-items: center; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: #fff; color: var(--ink); font-weight: 800; cursor: pointer; }
-    .quantity-control button:hover { border-color: var(--accent); color: var(--accent); }
-    .quantity-value { min-width: 1.1em; font-size: .85rem; font-weight: 800; text-align: center; }
-    .remove-button { padding: 3px 0; border: 0; background: none; color: #9c5644; font-size: .78rem; font-weight: 700; cursor: pointer; }
-    .remove-button:hover { text-decoration: underline; }
-    .cart-summary { display: grid; gap: 10px; padding: 15px 0; border-top: 1px solid var(--line); }
-    .summary-line { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: .9rem; }
-    .summary-line.total { color: var(--ink); font-size: 1.05rem; font-weight: 900; }
-    .checkout-button { margin-top: 5px; background: var(--orange); }
-    .checkout-button:hover:not(:disabled) { background: #c76535; }
-    .checkout-button:disabled { background: #c7cbc5; color: #565d58; cursor: not-allowed; }
-    .cart-note { margin: 12px 0 0; color: var(--muted); font-size: .75rem; text-align: center; }
-    .status { min-height: 1.5em; margin: 16px 0 0; color: var(--accent-dark); font-size: .88rem; font-weight: 700; }
-
-    footer { margin-top: 38px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
-    @media (max-width: 900px) {
-      .shop-layout { grid-template-columns: minmax(0, 1fr) 300px; gap: 18px; }
-      .cart-panel { padding: 17px; }
-    }
-    @media (max-width: 700px) {
-      .hero { grid-template-columns: 1fr; margin-top: 32px; }
-      .hero-stamp { display: none; }
-      .shop-layout { grid-template-columns: 1fr; }
-      .cart-panel { position: static; grid-row: 1; }
-      .section-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
-    }
-    @media (max-width: 480px) {
-      .product-grid { grid-template-columns: 1fr; }
-      .product-image { aspect-ratio: 1.8; }
-      .page { padding-inline: 14px; }
-      .hero { padding: 26px 22px; }
-      .topbar { align-items: flex-start; flex-direction: column; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
-    }
-  </style>
+  <meta name="theme-color" content="#f6f1e7">
+  <title>Week 12 | React state and effects</title>
+  <link rel="stylesheet" href="../assets/frame.css">
+  <link rel="stylesheet" href="../assets/site.css">
+  <link rel="stylesheet" href="page.css">
 </head>
 <body>
-  <main class="page">
-    <div class="topbar">
-      <a class="home-link" href="../index.html">← Course home</a>
-      <div class="brand"><span class="brand-mark" aria-hidden="true">g</span> The Good Shop</div>
+  <header class="site-header">
+    <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true">WP</span>Web Programming</a>
+    <div class="crumbs" role="navigation" aria-label="Breadcrumb">
+      <span aria-current="page">Week 12</span>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="page-head">
+      <p class="eyebrow">K0126002 &middot; Week 12 &middot; useState and useEffect</p>
+      <h1>React <span class="marker">state</span> &amp; effects</h1>
+      <p class="intro">A collection of React homework apps and practice exercises covering <code>useState</code> and <code>useEffect</code>. Explore the live apps, review their source, and try each exercise below.</p>
     </div>
 
-    <header class="hero">
-      <div>
-        <p class="eyebrow">Week 12-1 · Interactive shopping cart</p>
-        <h1>Good things,<br>thoughtfully chosen.</h1>
-        <p class="hero-copy">A little collection of useful things for everyday life. Pick your favorites and see your cart update as you shop.</p>
+    <h2 class="section-title">Homework</h2>
+    <div class="homework-grid">
+      <article class="card">
+        <h3>Interactive shopping cart</h3>
+        <p>Browse six products, adjust quantities and see the cart total update. Cart contents are saved between visits with <code>localStorage</code>.</p>
+        <div class="actions"><a class="btn alt" href="shopping-cart/index.html">Live app</a><a class="btn alt" href="https://github.com/sodiq200625-maker/webproject/tree/main/week12-1/source/shopping-cart" target="_blank" rel="noopener noreferrer">Source code<span class="visually-hidden"> (opens in a new tab)</span></a><a class="btn alt" href="https://github.com/sodiq200625-maker/webproject" target="_blank" rel="noopener noreferrer">My repository<span class="visually-hidden"> (opens in a new tab)</span></a></div>
+      </article>
+      <article class="card">
+        <h3>Weather dashboard</h3>
+        <p>Check current conditions by city or coordinates, with loading and error states plus an option to use your location.</p>
+        <div class="actions"><a class="btn alt" href="weather/index.html">Live app</a><a class="btn alt" href="https://github.com/sodiq200625-maker/webproject/tree/main/week12-1/source/weather" target="_blank" rel="noopener noreferrer">Source code<span class="visually-hidden"> (opens in a new tab)</span></a><a class="btn alt" href="https://github.com/sodiq200625-maker/webproject" target="_blank" rel="noopener noreferrer">My repository<span class="visually-hidden"> (opens in a new tab)</span></a></div>
+      </article>
+      <article class="card">
+        <h3>My personal portfolio</h3>
+        <p>See my portfolio and related projects in the course repository.</p>
+        <div class="actions"><a class="btn alt" href="../week10/portfolio/index.html">Open my portfolio</a></div>
+      </article>
+    </div>
+
+    <h2 class="section-title">Monday practice: useState</h2>
+    <p>The code challenge, the video-lecture challenge, the three study-guide exercises and the practice from the last slide. The code is copied from the files; the output on the right is the real component running.</p>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">M1</span>
+        <h3>Code challenge: counter with history</h3>
+        <span class="fix-audit">CounterWithHistory.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> build a counter with +1, -1 and Reset buttons, a history of the last 5 values and an Undo button, using two state variables (<code>count</code> and <code>history</code>).</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>CounterWithHistory.jsx</code></figcaption>
+          <pre><code>import { useState } from &#x27;react&#x27;;
+
+// Monday code challenge: a counter with history.
+//   1. show the count (starts at 0)      2. +1 and -1 buttons     3. Reset (back to 0)
+//   4. show the last 5 count values      5. Undo goes back to the previous value in the history
+// Two state variables: count, and history (an array). Every change adds to the history.
+function CounterWithHistory() {
+  const [count, setCount] = useState(0);
+  const [history, setHistory] = useState([0]);
+
+  function change(next) {
+    setCount(next);
+    setHistory((prev) =&gt; [...prev, next].slice(-5)); // new array every time, never push
+  }
+
+  function undo() {
+    if (history.length &lt; 2) return; // nothing to go back to
+    setCount(history[history.length - 2]);
+    setHistory((prev) =&gt; prev.slice(0, -1)); // drop the last item
+  }
+
+  return (
+    &lt;div className=&quot;card counter&quot;&gt;
+      &lt;p className=&quot;big&quot; aria-live=&quot;polite&quot;&gt;{count}&lt;/p&gt;
+      &lt;div className=&quot;buttons&quot;&gt;
+        &lt;button type=&quot;button&quot; onClick={() =&gt; change(count + 1)}&gt;+1&lt;/button&gt;
+        &lt;button type=&quot;button&quot; onClick={() =&gt; change(count - 1)}&gt;-1&lt;/button&gt;
+        &lt;button type=&quot;button&quot; onClick={() =&gt; change(0)}&gt;Reset&lt;/button&gt;
+        &lt;button type=&quot;button&quot; onClick={undo} disabled={history.length &lt; 2}&gt;Undo&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;p className=&quot;history&quot;&gt;History: [{history.join(&#x27;, &#x27;)}]&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default CounterWithHistory;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=counter-history" title="Running output of Code challenge: counter with history" loading="lazy" height="220" data-demo="counter-history"></iframe></div>
+        </figure>
       </div>
-      <div class="hero-stamp" aria-hidden="true">MADE FOR<br>EVERYDAY<br>RITUALS</div>
-    </header>
+      <p><strong>Result:</strong> the history is a new array every time (<code>[...prev, next].slice(-5)</code>), never changed in place. Undo goes back to the previous value and is disabled when there is nothing to go back to.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">M2</span>
+        <h3>Shopping cart counter</h3>
+        <span class="fix-audit">ShoppingCounter.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> show three items with a quantity each (a - and a + button), keep the quantity from going below 0, and show a total from quantity &times; price.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>ShoppingCounter.jsx</code></figcaption>
+          <pre><code>import { useState } from &#x27;react&#x27;;
 
-    <div class="shop-layout">
-      <section aria-labelledby="products-heading">
-        <div class="section-heading">
-          <h2 id="products-heading">The collection</h2>
-          <p>Thoughtful finds, ready to take home.</p>
-        </div>
-        <div class="product-grid" id="product-list"></div>
-      </section>
+// Monday video lecture challenge: three items, each with a quantity (- and +), a quantity that
+// cannot go below 0, and a total worked out from quantity x price.
+// State: one object that maps an item id to its quantity, e.g. { 1: 2, 2: 0, 3: 1 }.
+const items = [
+  { id: 1, name: &#x27;커피&#x27;, price: 4500 },
+  { id: 2, name: &#x27;샌드위치&#x27;, price: 7000 },
+  { id: 3, name: &#x27;물&#x27;, price: 1000 },
+];
 
-      <aside class="cart-panel" aria-labelledby="cart-heading">
-        <div class="cart-heading">
-          <h2 id="cart-heading">Your bag</h2>
-          <span class="cart-count" id="cart-count" aria-label="0 items in cart">0</span>
-        </div>
-        <div class="cart-items" id="cart-items"></div>
-        <div class="cart-summary">
-          <div class="summary-line"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
-          <div class="summary-line"><span>Shipping</span><span id="shipping">—</span></div>
-          <div class="summary-line total"><span>Total</span><span id="total">$0.00</span></div>
-          <button class="checkout-button" id="checkout-button" type="button" disabled>Continue to checkout</button>
-        </div>
-        <p class="cart-note">Shipping is on us for orders over $75.</p>
-        <p class="status" id="cart-status" role="status" aria-live="polite"></p>
-      </aside>
-    </div>
+function ShoppingCounter() {
+  const [quantities, setQuantities] = useState({ 1: 0, 2: 0, 3: 0 });
 
-    <footer>Week 12-1 · Product list, cart state, quantity controls, and a live order summary.</footer>
+  function change(id, amount) {
+    setQuantities((prev) =&gt; ({ ...prev, [id]: Math.max(0, prev[id] + amount) })); // never below 0
+  }
+
+  const total = items.reduce((sum, item) =&gt; sum + item.price * quantities[item.id], 0);
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;ul className=&quot;plain-list&quot;&gt;
+        {items.map((item) =&gt; (
+          &lt;li key={item.id} className=&quot;line&quot;&gt;
+            &lt;span&gt;{item.name} &lt;span className=&quot;muted&quot;&gt;{item.price.toLocaleString(&#x27;ko-KR&#x27;)}원&lt;/span&gt;&lt;/span&gt;
+            &lt;span className=&quot;qty&quot;&gt;
+              &lt;button type=&quot;button&quot; aria-label={`Remove one ${item.name}`} onClick={() =&gt; change(item.id, -1)} disabled={quantities[item.id] === 0}&gt;−&lt;/button&gt;
+              &lt;output&gt;{quantities[item.id]}&lt;/output&gt;
+              &lt;button type=&quot;button&quot; aria-label={`Add one ${item.name}`} onClick={() =&gt; change(item.id, 1)}&gt;+&lt;/button&gt;
+            &lt;/span&gt;
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+      &lt;p className=&quot;total&quot;&gt;Total: &lt;strong&gt;{total.toLocaleString(&#x27;ko-KR&#x27;)}원&lt;/strong&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ShoppingCounter;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=shopping-counter" title="Running output of Shopping cart counter" loading="lazy" height="220" data-demo="shopping-counter"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> one state object maps each item id to its quantity. The - button is disabled at 0 and the total is calculated while rendering, so it is never stored.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">M3</span>
+        <h3>Toggle visibility</h3>
+        <span class="fix-audit">ToggleDetail.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> a &ldquo;Show details&rdquo; / &ldquo;Hide details&rdquo; button that toggles a paragraph with boolean state.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>ToggleDetail.jsx</code></figcaption>
+          <pre><code>import { useState } from &#x27;react&#x27;;
+
+// Study guide, exercise 1: a button that shows and hides a paragraph, using boolean state.
+function ToggleDetail() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;button type=&quot;button&quot; aria-expanded={isVisible} onClick={() =&gt; setIsVisible((prev) =&gt; !prev)}&gt;
+        {isVisible ? &#x27;Hide details&#x27; : &#x27;Show details&#x27;}
+      &lt;/button&gt;
+      {isVisible &amp;&amp; &lt;p className=&quot;reveal-text&quot;&gt;React state enables dynamic UIs without page reloads.&lt;/p&gt;}
+    &lt;/div&gt;
+  );
+}
+
+export default ToggleDetail;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=toggle" title="Running output of Toggle visibility" loading="lazy" height="220" data-demo="toggle"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> the button flips <code>isVisible</code> and the paragraph appears and disappears.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">M4</span>
+        <h3>Add and remove items from a list</h3>
+        <span class="fix-audit">TaskList.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> a text input and an Add button that adds items to an array in state, and a &#10005; button on each item that removes it.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>TaskList.jsx</code></figcaption>
+          <pre><code>import { useState } from &#x27;react&#x27;;
+
+// Study guide, exercise 2: add and remove items from a list.
+// The array is never changed in place: [...prev, item] adds, filter() removes.
+function TaskList() {
+  const [tasks, setTasks] = useState([]);
+  const [input, setInput] = useState(&#x27;&#x27;);
+
+  function addTask(e) {
+    e.preventDefault();
+    if (!input.trim()) return;
+    setTasks((prev) =&gt; [...prev, { id: Date.now(), text: input.trim() }]);
+    setInput(&#x27;&#x27;);
+  }
+
+  function removeTask(id) {
+    setTasks((prev) =&gt; prev.filter((t) =&gt; t.id !== id));
+  }
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;form className=&quot;inline-form&quot; onSubmit={addTask}&gt;
+        &lt;label className=&quot;sr-only&quot; htmlFor=&quot;new-task&quot;&gt;New task&lt;/label&gt;
+        &lt;input id=&quot;new-task&quot; value={input} onChange={(e) =&gt; setInput(e.target.value)} placeholder=&quot;New task&quot; /&gt;
+        &lt;button type=&quot;submit&quot;&gt;Add&lt;/button&gt;
+      &lt;/form&gt;
+      {tasks.length === 0 ? (
+        &lt;p className=&quot;muted&quot;&gt;No tasks yet. Add one above.&lt;/p&gt;
+      ) : (
+        &lt;ul className=&quot;plain-list&quot;&gt;
+          {tasks.map((task) =&gt; (
+            &lt;li key={task.id} className=&quot;line&quot;&gt;
+              &lt;span&gt;{task.text}&lt;/span&gt;
+              &lt;button type=&quot;button&quot; className=&quot;small&quot; aria-label={`Remove ${task.text}`} onClick={() =&gt; removeTask(task.id)}&gt;✕&lt;/button&gt;
+            &lt;/li&gt;
+          ))}
+        &lt;/ul&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default TaskList;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=task-list" title="Running output of Add and remove items from a list" loading="lazy" height="220" data-demo="task-list"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> items are added with spread and removed with <code>filter</code>, each with a stable id as its key.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">M5</span>
+        <h3>Lift state between two counters</h3>
+        <span class="fix-audit">ScoreBoard.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> a parent <code>ScoreBoard</code> with two <code>PlayerScore</code> children that shows the combined total.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>ScoreBoard.jsx</code></figcaption>
+          <pre><code>import { useState } from &#x27;react&#x27;;
+
+// Study guide, exercise 3: lifting state up. The two scores live in the parent (ScoreBoard),
+// which hands each child its value and callbacks, so the parent can show the combined total.
+function PlayerScore({ name, score, onIncrement, onDecrement }) {
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;h3&gt;{name}: {score}&lt;/h3&gt;
+      &lt;div className=&quot;buttons&quot;&gt;
+        &lt;button type=&quot;button&quot; aria-label={`Subtract one from ${name}`} onClick={onDecrement}&gt;−&lt;/button&gt;
+        &lt;button type=&quot;button&quot; aria-label={`Add one to ${name}`} onClick={onIncrement}&gt;+&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+function ScoreBoard() {
+  const [p1, setP1] = useState(0);
+  const [p2, setP2] = useState(0);
+
+  return (
+    &lt;div className=&quot;stack&quot;&gt;
+      &lt;div className=&quot;cards&quot;&gt;
+        &lt;PlayerScore name=&quot;Player 1&quot; score={p1} onIncrement={() =&gt; setP1((p) =&gt; p + 1)} onDecrement={() =&gt; setP1((p) =&gt; p - 1)} /&gt;
+        &lt;PlayerScore name=&quot;Player 2&quot; score={p2} onIncrement={() =&gt; setP2((p) =&gt; p + 1)} onDecrement={() =&gt; setP2((p) =&gt; p - 1)} /&gt;
+      &lt;/div&gt;
+      &lt;h3 className=&quot;total&quot; aria-live=&quot;polite&quot;&gt;Total: {p1 + p2}&lt;/h3&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default ScoreBoard;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=scoreboard" title="Running output of Lift state between two counters" loading="lazy" height="220" data-demo="scoreboard"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> the scores live in the parent, so it can add them. The children get their value and callbacks through props: data flows down, events flow up.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">M6</span>
+        <h3>Live word count</h3>
+        <span class="fix-audit">WordCount.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> the practice from the end of Monday&rsquo;s slides: a live word count under a textarea, using <code>useState</code>.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>WordCount.jsx</code></figcaption>
+          <pre><code>import { useEffect, useState } from &#x27;react&#x27;;
+
+// Monday practice: &quot;Add a live word count to a textarea with useState&quot;.
+// The text is the only state; the word count is worked out while rendering (no extra state).
+export function WordCount() {
+  const [text, setText] = useState(&#x27;&#x27;);
+  const words = text.trim() === &#x27;&#x27; ? 0 : text.trim().split(/\s+/).length;
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;label htmlFor=&quot;wc-text&quot;&gt;Write something&lt;/label&gt;
+      &lt;textarea id=&quot;wc-text&quot; rows=&quot;4&quot; value={text} onChange={(e) =&gt; setText(e.target.value)} placeholder=&quot;Type here...&quot; /&gt;
+      &lt;p className=&quot;muted&quot; aria-live=&quot;polite&quot;&gt;{words} {words === 1 ? &#x27;word&#x27; : &#x27;words&#x27;}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=word-count" title="Running output of Live word count" loading="lazy" height="220" data-demo="word-count"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> only the text is state; the number of words is calculated from it while rendering.</p>
+    </article>
+
+    <h2 class="section-title">Friday practice: useEffect</h2>
+    <p>The code challenge, the three study-guide exercises and the practice from the last slide. Two of these call real APIs, so they need an internet connection.</p>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">F1</span>
+        <h3>Code challenge: GitHub user lookup</h3>
+        <span class="fix-audit">GitHubLookup.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> an input for a GitHub username and a Search button that fetches <code>api.github.com/users/{name}</code>; show avatar, name, bio, followers and public repos, a loading state and a message for 404. Bonus: abort the previous request.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>GitHubLookup.jsx</code></figcaption>
+          <pre><code>import { useEffect, useState } from &#x27;react&#x27;;
+
+// Friday code challenge: GitHub user lookup.
+//   input for a username -&gt; Search -&gt; fetch https://api.github.com/users/{username}
+//   show avatar, name, bio, followers, public repos; a loading state; a message for 404;
+//   BONUS: abort the previous request when the username changes.
+function GitHubLookup() {
+  const [input, setInput] = useState(&#x27;&#x27;);
+  const [username, setUsername] = useState(&#x27;&#x27;); // set when Search is pressed
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() =&gt; {
+    if (!username) return;
+    const controller = new AbortController(); // lets the cleanup cancel an old request
+    setLoading(true);
+    setError(null);
+    setUser(null);
+
+    fetch(`https://api.github.com/users/${encodeURIComponent(username)}`, { signal: controller.signal })
+      .then((res) =&gt; {
+        if (res.status === 404) throw new Error(`No GitHub user called &quot;${username}&quot; (404)`);
+        if (res.status === 403 || res.status === 429) throw new Error(&#x27;GitHub says too many requests right now. Try again in a few minutes.&#x27;);
+        if (!res.ok) throw new Error(`Request failed (${res.status})`);
+        return res.json();
+      })
+      .then((data) =&gt; {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch((err) =&gt; {
+        if (err.name === &#x27;AbortError&#x27;) return; // an old request that was cancelled
+        setError(err instanceof TypeError ? &#x27;Network problem: check your connection.&#x27; : err.message);
+        setLoading(false);
+      });
+
+    return () =&gt; controller.abort();
+  }, [username]);
+
+  function search(e) {
+    e.preventDefault();
+    setUsername(input.trim());
+  }
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;form className=&quot;inline-form&quot; onSubmit={search}&gt;
+        &lt;label className=&quot;sr-only&quot; htmlFor=&quot;gh-user&quot;&gt;GitHub username&lt;/label&gt;
+        &lt;input id=&quot;gh-user&quot; value={input} onChange={(e) =&gt; setInput(e.target.value)} placeholder=&quot;GitHub username, e.g. octocat&quot; /&gt;
+        &lt;button type=&quot;submit&quot;&gt;Search&lt;/button&gt;
+      &lt;/form&gt;
+      &lt;div aria-live=&quot;polite&quot;&gt;
+        {loading &amp;&amp; &lt;p className=&quot;muted&quot;&gt;Loading...&lt;/p&gt;}
+        {error &amp;&amp; &lt;p className=&quot;error&quot;&gt;{error}&lt;/p&gt;}
+        {user &amp;&amp; (
+          &lt;div className=&quot;profile&quot;&gt;
+            &lt;img src={user.avatar_url} alt=&quot;&quot; width=&quot;64&quot; height=&quot;64&quot; /&gt;
+            &lt;div&gt;
+              &lt;h3&gt;{user.name || user.login}&lt;/h3&gt;
+              {user.bio &amp;&amp; &lt;p&gt;{user.bio}&lt;/p&gt;}
+              &lt;p className=&quot;muted&quot;&gt;{user.followers} followers · {user.public_repos} public repos&lt;/p&gt;
+              &lt;a href={user.html_url} target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;{user.html_url}&lt;span className=&quot;sr-only&quot;&gt; (opens in a new tab)&lt;/span&gt;&lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        )}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default GitHubLookup;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=github-lookup" title="Running output of Code challenge: GitHub user lookup" loading="lazy" height="220" data-demo="github-lookup"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> the effect runs when the searched name changes and its cleanup aborts the request, which is the bonus. 404, a rate limit (GitHub allows 60 requests an hour without a key) and a lost connection each get their own message. Try <code>octocat</code> or the instructor&rsquo;s <code>muxiddin19</code>.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">F2</span>
+        <h3>Page title sync</h3>
+        <span class="fix-audit">TitleEditor.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> update <code>document.title</code> as the user types, and put the title back with a cleanup function.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>TitleEditor.jsx</code></figcaption>
+          <pre><code>import { useEffect, useState } from &#x27;react&#x27;;
+
+// Study guide, exercise 1 (Friday): keep document.title in sync with what is typed, and put
+// the title back when the component goes away (the cleanup function).
+function TitleEditor() {
+  const [text, setText] = useState(&#x27;&#x27;);
+
+  useEffect(() =&gt; {
+    const original = document.title;
+    document.title = text || original;
+    return () =&gt; {
+      document.title = original; // cleanup: runs before the next effect and on unmount
+    };
+  }, [text]);
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;label htmlFor=&quot;title-text&quot;&gt;Type to change the tab title&lt;/label&gt;
+      &lt;input id=&quot;title-text&quot; value={text} onChange={(e) =&gt; setText(e.target.value)} placeholder=&quot;Type to change tab title...&quot; /&gt;
+      &lt;p className=&quot;muted&quot;&gt;document.title is now: &lt;strong&gt;{text || &#x27;(unchanged)&#x27;}&lt;/strong&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default TitleEditor;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=title-sync" title="Running output of Page title sync" loading="lazy" height="220" data-demo="title-sync"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> inside this box the title of the embedded page changes as you type; the cleanup restores it before the next effect and when the component goes away.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">F3</span>
+        <h3>Fetch a user from an API</h3>
+        <span class="fix-audit">FetchUser.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> fetch <code>jsonplaceholder.typicode.com/users/1</code> and show the name and email, with &ldquo;Loading...&rdquo; and error handling.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>FetchUser.jsx</code></figcaption>
+          <pre><code>import { useEffect, useState } from &#x27;react&#x27;;
+
+// Study guide, exercise 2 (Friday): fetch a user when the component first appears, with the
+// usual three pieces of state: the data, a loading flag and an error.
+function FetchUser() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() =&gt; {
+    const controller = new AbortController();
+    async function fetchUser() {
+      // the async function is defined inside the effect (an effect callback cannot be async itself)
+      try {
+        const res = await fetch(&#x27;https://jsonplaceholder.typicode.com/users/1&#x27;, { signal: controller.signal });
+        if (!res.ok) throw new Error(&#x27;Failed to fetch&#x27;);
+        setUser(await res.json());
+      } catch (err) {
+        if (err.name === &#x27;AbortError&#x27;) return;
+        setError(err.message);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+    fetchUser();
+    return () =&gt; controller.abort();
+  }, []); // empty array: run once, on mount
+
+  return (
+    &lt;div className=&quot;card&quot; aria-live=&quot;polite&quot;&gt;
+      {loading &amp;&amp; &lt;p className=&quot;muted&quot;&gt;Loading...&lt;/p&gt;}
+      {error &amp;&amp; &lt;p className=&quot;error&quot;&gt;Error: {error}&lt;/p&gt;}
+      {user &amp;&amp; (
+        &lt;&gt;
+          &lt;h3&gt;{user.name}&lt;/h3&gt;
+          &lt;p&gt;{user.email}&lt;/p&gt;
+        &lt;/&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default FetchUser;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=fetch-user" title="Running output of Fetch a user from an API" loading="lazy" height="220" data-demo="fetch-user"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> an effect with an empty dependency array runs once. The async function is defined inside the effect, because an effect callback cannot be <code>async</code> itself.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">F4</span>
+        <h3>Stopwatch with cleanup</h3>
+        <span class="fix-audit">Stopwatch.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> a stopwatch with Start, Stop and Reset buttons, using <code>setInterval</code> in an effect and cleaning it up.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>Stopwatch.jsx</code></figcaption>
+          <pre><code>import { useEffect, useState } from &#x27;react&#x27;;
+
+// Study guide, exercise 3 (Friday): a stopwatch. The interval is created inside useEffect and
+// cleared in the cleanup function, so it never keeps running after Stop or after unmounting.
+function Stopwatch() {
+  const [seconds, setSeconds] = useState(0);
+  const [running, setRunning] = useState(false);
+
+  useEffect(() =&gt; {
+    if (!running) return; // nothing to do while stopped
+    const id = setInterval(() =&gt; setSeconds((s) =&gt; s + 1), 1000);
+    return () =&gt; clearInterval(id); // runs when `running` changes and when the component goes away
+  }, [running]);
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;p className=&quot;big&quot; aria-live=&quot;off&quot;&gt;{seconds}s&lt;/p&gt;
+      &lt;div className=&quot;buttons&quot;&gt;
+        &lt;button type=&quot;button&quot; onClick={() =&gt; setRunning(true)} disabled={running}&gt;Start&lt;/button&gt;
+        &lt;button type=&quot;button&quot; onClick={() =&gt; setRunning(false)} disabled={!running}&gt;Stop&lt;/button&gt;
+        &lt;button type=&quot;button&quot; onClick={() =&gt; { setRunning(false); setSeconds(0); }}&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default Stopwatch;</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=stopwatch" title="Running output of Stopwatch with cleanup" loading="lazy" height="220" data-demo="stopwatch"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> the interval is only created while it is running, and the cleanup clears it when you press Stop, Reset or leave the page, so nothing keeps ticking in the background.</p>
+    </article>
+    <article class="card fix">
+      <header class="fix-head">
+        <span class="fix-num">F5</span>
+        <h3>Live character count with useEffect</h3>
+        <span class="fix-audit">WordCount.jsx</span>
+      </header>
+      <p><strong>Goal:</strong> the practice from the end of Friday&rsquo;s slides: a live character count for an input, using <code>useEffect</code>.</p>
+      <div class="diff">
+        <figure class="diff-side code">
+          <figcaption>Code <code>WordCount.jsx</code></figcaption>
+          <pre><code>// Friday practice: &quot;Add a live character count to any input using useEffect&quot;.
+// The effect copies the length into its own state after every change of the text. That is only
+// here to practise useEffect: the count could simply be text.length while rendering, which is
+// what the &quot;you might not need an effect&quot; slide recommends.
+export function CharCountEffect() {
+  const [text, setText] = useState(&#x27;&#x27;);
+  const [chars, setChars] = useState(0);
+
+  useEffect(() =&gt; {
+    setChars(text.length);
+  }, [text]);
+
+  return (
+    &lt;div className=&quot;card&quot;&gt;
+      &lt;label htmlFor=&quot;cc-text&quot;&gt;Type in the box&lt;/label&gt;
+      &lt;input id=&quot;cc-text&quot; value={text} onChange={(e) =&gt; setText(e.target.value)} placeholder=&quot;Type here...&quot; /&gt;
+      &lt;p className=&quot;muted&quot; aria-live=&quot;polite&quot;&gt;{chars} {chars === 1 ? &#x27;character&#x27; : &#x27;characters&#x27;}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        </figure>
+        <figure class="diff-side good">
+          <figcaption>Output <code>running</code></figcaption>
+          <div class="diff-out"><iframe src="practice/index.html?demo=char-count" title="Running output of Live character count with useEffect" loading="lazy" height="220" data-demo="char-count"></iframe></div>
+        </figure>
+      </div>
+      <p><strong>Result:</strong> done with an effect as asked. It is only practice: <code>text.length</code> while rendering would give the same number with less code, which is what the &ldquo;you might not need an effect&rdquo; slide says.</p>
+    </article>
   </main>
-
-  <script>
-    const products = [
-      {
-        id: "ceramic-mug",
-        name: "Everyday Ceramic Mug",
-        category: "Kitchen",
-        description: "A softly shaped mug for slow mornings and second cups.",
-        price: 2400,
-        image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=900&q=85",
-        imageAlt: "Handmade ceramic mug on a wooden table"
-      },
-      {
-        id: "linen-tote",
-        name: "Market Linen Tote",
-        category: "Accessories",
-        description: "Roomy, sturdy, and ready for the long way home.",
-        price: 3200,
-        image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=900&q=85",
-        imageAlt: "Neutral canvas tote bag"
-      },
-      {
-        id: "desk-notebook",
-        name: "Field Notes Journal",
-        category: "Paper",
-        description: "A cloth-bound notebook for ideas worth keeping.",
-        price: 1800,
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=85",
-        imageAlt: "Open notebook with a pen"
-      },
-      {
-        id: "glass-bottle",
-        name: "Daily Glass Bottle",
-        category: "Everyday",
-        description: "A simple reusable bottle with a comfortable carry loop.",
-        price: 2800,
-        image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=900&q=85",
-        imageAlt: "Reusable clear glass water bottle"
-      },
-      {
-        id: "soft-throw",
-        name: "Soft Cotton Throw",
-        category: "Home",
-        description: "Lightweight, textured comfort for the sofa or a picnic.",
-        price: 5900,
-        image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
-        imageAlt: "Soft neutral throw on a living room sofa"
-      },
-      {
-        id: "plant-pot",
-        name: "Little Stoneware Planter",
-        category: "Home",
-        description: "A small home for a windowsill favorite.",
-        price: 2600,
-        image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=900&q=85",
-        imageAlt: "Green houseplant in a ceramic pot"
-      },
-      {
-        id: "creatine-monohydrate",
-        name: "Creatine Monohydrate · 300 g",
-        category: "Fitness",
-        description: "Unflavored powder · 100 servings of 3 g each.",
-        price: 1999,
-        image: "images/creatine-front.jpg",
-        imageAlt: "Front of a Nutricost creatine monohydrate container",
-        imageBack: "images/creatine-back.jpg",
-        imageBackAlt: "Nutrition and product information on the back of the container"
-      }
-    ];
-
-    const state = { cartItems: [] };
-    const productList = document.getElementById("product-list");
-    const cartItemsElement = document.getElementById("cart-items");
-    const cartCount = document.getElementById("cart-count");
-    const subtotalElement = document.getElementById("subtotal");
-    const shippingElement = document.getElementById("shipping");
-    const totalElement = document.getElementById("total");
-    const checkoutButton = document.getElementById("checkout-button");
-    const cartStatus = document.getElementById("cart-status");
-    const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
-
-    function formatPrice(cents) {
-      return currency.format(cents / 100);
-    }
-
-    function getProduct(productId) {
-      return products.find((product) => product.id === productId);
-    }
-
-    function renderProductList() {
-      productList.innerHTML = products.map((product) => `
-        <article class="product-card">
-          ${product.imageBack
-            ? `<div class="product-gallery">
-                <img class="product-image" src="${product.image}" alt="${product.imageAlt}" loading="lazy">
-                <img class="product-image" src="${product.imageBack}" alt="${product.imageBackAlt}" loading="lazy">
-              </div>`
-            : `<img class="product-image" src="${product.image}" alt="${product.imageAlt}" loading="lazy">`}
-          <div class="product-copy">
-            <div class="product-meta">
-              <span class="product-category">${product.category}</span>
-              <span class="product-price">${formatPrice(product.price)}</span>
-            </div>
-            <h3>${product.name}</h3>
-            <p>${product.description}</p>
-            <button class="add-button" type="button" data-action="add" data-product-id="${product.id}" aria-label="Add ${product.name} to your bag">Add to bag</button>
-          </div>
-        </article>
-      `).join("");
-    }
-
-    function renderCart() {
-      const itemCount = state.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-      const subtotal = state.cartItems.reduce((sum, item) => {
-        const product = getProduct(item.id);
-        return sum + (product ? product.price * item.quantity : 0);
-      }, 0);
-      const shipping = subtotal === 0 || subtotal >= 7500 ? 0 : 600;
-      const total = subtotal + shipping;
-
-      cartCount.textContent = String(itemCount);
-      cartCount.setAttribute("aria-label", `${itemCount} ${itemCount === 1 ? "item" : "items"} in cart`);
-      cartItemsElement.innerHTML = state.cartItems.length === 0
-        ? '<p class="cart-empty">Your bag is waiting for something good.</p>'
-        : state.cartItems.map((item) => {
-          const product = getProduct(item.id);
-          if (!product) return "";
-          return `
-            <article class="cart-item">
-              <img src="${product.image}" alt="" loading="lazy">
-              <div class="cart-item-main">
-                <div class="cart-item-top">
-                  <p class="cart-item-name">${product.name}</p>
-                  <span class="cart-item-price">${formatPrice(product.price * item.quantity)}</span>
-                </div>
-                <div class="cart-item-actions">
-                  <div class="quantity-control" aria-label="Quantity for ${product.name}">
-                    <button type="button" data-action="decrease" data-product-id="${product.id}" aria-label="Decrease ${product.name} quantity">−</button>
-                    <span class="quantity-value">${item.quantity}</span>
-                    <button type="button" data-action="increase" data-product-id="${product.id}" aria-label="Increase ${product.name} quantity">+</button>
-                  </div>
-                  <button class="remove-button" type="button" data-action="remove" data-product-id="${product.id}">Remove</button>
-                </div>
-              </div>
-            </article>
-          `;
-        }).join("");
-
-      subtotalElement.textContent = formatPrice(subtotal);
-      shippingElement.textContent = shipping === 0 ? (subtotal === 0 ? "—" : "Free") : formatPrice(shipping);
-      totalElement.textContent = formatPrice(total);
-      checkoutButton.disabled = itemCount === 0;
-    }
-
-    function renderShoppingCart() {
-      renderProductList();
-      renderCart();
-    }
-
-    function updateCart(action, productId) {
-      const product = getProduct(productId);
-      if (!product) return;
-
-      const currentItem = state.cartItems.find((item) => item.id === productId);
-      if (action === "add" || action === "increase") {
-        state.cartItems = currentItem
-          ? state.cartItems.map((item) => item.id === productId ? { ...item, quantity: item.quantity + 1 } : item)
-          : [...state.cartItems, { id: productId, quantity: 1 }];
-        cartStatus.textContent = `${product.name} added to your bag.`;
-      } else if (action === "decrease" && currentItem) {
-        state.cartItems = currentItem.quantity === 1
-          ? state.cartItems.filter((item) => item.id !== productId)
-          : state.cartItems.map((item) => item.id === productId ? { ...item, quantity: item.quantity - 1 } : item);
-        cartStatus.textContent = currentItem.quantity === 1
-          ? `${product.name} removed from your bag.`
-          : `${product.name} quantity decreased.`;
-      } else if (action === "remove" && currentItem) {
-        state.cartItems = state.cartItems.filter((item) => item.id !== productId);
-        cartStatus.textContent = `${product.name} removed from your bag.`;
-      } else {
-        return;
-      }
-
-      renderCart();
-    }
-
-    document.addEventListener("click", (event) => {
-      const button = event.target.closest("button[data-action]");
-      if (!button) return;
-      updateCart(button.dataset.action, button.dataset.productId);
-    });
-
-    checkoutButton.addEventListener("click", () => {
-      if (state.cartItems.length > 0) {
-        cartStatus.textContent = "Thanks! Checkout is a demo and no order was placed.";
-      }
-    });
-
-    renderShoppingCart();
-  </script>
+  <script src="frames.js" defer></script>
+  <script src="../site-nav.js" defer></script>
 </body>
 </html>
