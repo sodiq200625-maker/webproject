@@ -159,14 +159,12 @@
       font-weight: 300;
       letter-spacing: -0.03em;
       line-height: 1.15;
-      white-space: nowrap;
-      background: linear-gradient(180deg, #ffffff 20%, #8fa3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text);
+      text-shadow: 0 2px 18px rgba(143, 163, 184, 0.28);
     }
 
-    html[data-mono="true"] .brand-block h2 {
-      font-size: clamp(1.25rem, 1.85vw, 1.85rem);
+    html[data-theme="light"] .brand-block h2 {
+      text-shadow: none;
     }
 
     html[data-theme="light"] .brand-block h2 {
