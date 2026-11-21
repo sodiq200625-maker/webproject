@@ -19,12 +19,13 @@
     }
 
     * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    } 
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     html {
-      scroll-behavior: a;
+      scroll-behavior: smooth;
       background: var(--bg);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
@@ -162,6 +163,7 @@
       line-height: 1.05;
       background: linear-gradient(180deg, #ffffff 25%, rgba(255, 255, 255, 0.45) 100%);
       -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .hero-sub {
@@ -327,7 +329,7 @@
 
   <header class="topbar">
     <span class="brand">Muhammadsodik</span>
-    <a class="nav-pill" href="https://sodiq200625-maker.github.io/webproject/week10/portfolio/index.html">Portfolio </a>
+    <a class="nav-pill" href="https://sodiq200625-maker.github.io/webproject/week10/portfolio/index.html">Portfolio</a>
   </header>
 
   <section class="scroll-stage" id="scroll-stage">
@@ -364,6 +366,17 @@
       <a class="glass-card" href="week4/index.html">
         <div class="card-top"><span class="week-tag">04</span></div>
         <div><div class="week-title">Week 4</div><div class="week-topic">DOM &amp; Events</div></div>
+      </a>
+
+      <a class="glass-card" href="group_project/mebel.html">
+        <div class="card-top"><span class="week-tag">04 · Group</span></div>
+        <div><div class="week-title">Group Project 1</div><div class="week-topic">Mebel — DOM &amp; Events</div></div>
+      </a>
+
+      <!-- Update the href, title, and topic below for your new group project -->
+      <a class="glass-card" href="group_project_2/index.html">
+        <div class="card-top"><span class="week-tag">05 · Group</span></div>
+        <div><div class="week-title">Group Project 2</div><div class="week-topic">Project Description</div></div>
       </a>
 
       <a class="glass-card" href="week6/index.html">
@@ -466,23 +479,22 @@
         card.style.setProperty("--my", `${e.clientY - bounds.top}px`);
       });
     });
+
     // Save scroll position before navigating away
     window.addEventListener("beforeunload", function () {
-        sessionStorage.setItem("scrollPosition", window.scrollY);
+      sessionStorage.setItem("scrollPosition", window.scrollY);
     });
 
     // Restore scroll position when returning
     window.addEventListener("pageshow", function () {
-        const savedPosition = sessionStorage.getItem("scrollPosition");
-
-        if (savedPosition !== null) {
-    window.scrollTo({
-        top: Number(savedPosition),
-        behavior: "instant"
+      const savedPosition = sessionStorage.getItem("scrollPosition");
+      if (savedPosition !== null) {
+        window.scrollTo({
+          top: Number(savedPosition),
+          behavior: "instant"
+        });
+      }
     });
-        }
-    });
-
   </script>
 </body>
 </html>
